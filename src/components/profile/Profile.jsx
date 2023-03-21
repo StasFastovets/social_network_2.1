@@ -26,7 +26,7 @@ const Profile = ({ profile, authorizedUserID, userID, savePhotoTC, isLoading, ..
             </div>
             {editMode ? <ProfileDataForm profile={profile} /> : <ProfileData profile={profile} />}
             const name = (params) => {
-
+const d
             }
          </div>
       </div>
