@@ -1,0 +1,65 @@
+
+.content {
+   grid-area: content;
+   margin: 40px;
+ }
+
+ .status {
+   grid-area: status;
+   margin: 10px;
+   font-size: 20px;
+ }
+ 
+ .status {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0px 40px 0px 0px;
+}
+.status_buttom input {
+  font-size: 18px;
+}
+
+ .info {
+   display: flex;
+   margin: 0px 0px 40px 0px;
+ }
+ 
+ .info_img{
+   height: 150px;
+   width: 150px;
+ }
+ 
+ .info_text {
+   margin: 0px 0px 0px 30px;
+   font-size: 18px;
+ }
+ 
+ .info_fullName {
+   margin: 20px 0px 20px 0px;
+   font-size: 24px;
+   font-weight: 700;
+ }
+
+ .info_job {
+  margin: 10px 0px 0px 0px;
+ }
+
+ .info_job span {
+  margin: 0px 0px 0px 20px;
+ }
+ 
+ .info_jobDescription {
+  font-weight: 500;
+ }
+
+ .buttonNone {
+   visibility: none;
+ }
+
+.upload {
+  input {
+    border-radius: 5px;
+    font-size: 18px;
+    color: #555;
+   }
+}
