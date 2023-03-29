@@ -22,11 +22,13 @@
  .info {
    display: flex;
    margin: 0px 0px 40px 0px;
+   flex-direction: column;
  }
  
  .info_img{
    height: 150px;
    width: 150px;
+   margin-bottom: 15px;
  }
  
  .info_text {
@@ -62,4 +64,33 @@
     font-size: 18px;
     color: #555;
    }
+}
+
+.info_row{
+  margin: 0px 0px 5px 0px;
+}
+
+.contact{
+  margin: 5px 0px 0px 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.title{
+  font-weight: 500;
+  padding: 0px 10px 0px 0px;
+}
+
+.button_owner {
+  button {
+    width: 100px;
+    height: 40px;
+    border-radius: 5px;
+    font-size: 16px;
+    margin: 20px 0px 0px 0px;
+  }
+}
+
+.contact__title {
+  flex: 0 0 100px;
 }

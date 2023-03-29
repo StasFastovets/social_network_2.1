@@ -14,7 +14,7 @@ const Users = ({ users, ...props }) => {
             <Paginator {...props} />
             <div className={s.users}>
                {
-                  users.map(user => <User {...props} user={user} />)
+                  users.map(user => <User {...props} user={user} key={user.id} />)
                }
             </div>
          </div>

@@ -41,17 +41,17 @@ export const updateStatusOfUser = (status) => {
    )
 }
 
-export const updateProfilePhoto = (photo) => {
-   return (
-      instance.put(`profile/photo`, { photo }).then(response => response.data)
-   )
-}
+// export const updateProfilePhoto = (photo) => {
+//    return (
+//       instance.put(`profile/photo`, { photo }).then(response => response.data)
+//    )
+// }
 
-export const updateProfileData = (data) => {
-   return (
-      instance.put(`profile`, { ...data }).then(response => response.data)
-   )
-}
+// export const updateProfileData = (data) => {
+//    return (
+//       instance.put(`profile`, { ...data }).then(response => response.data)
+//    )
+// }
 
 export const getUsers = (currentPage, pageSize) => {
    return (
@@ -81,4 +81,10 @@ export const savePhoto = async (photo) => {
       headers : {'Content-Type': 'multipart/form-data'}
    });
    return response.data;
+}
+
+export const saveProfile = (profile) => {
+   return (
+      instance.put(`profile`, profile).then(response => response.data)
+   )
 }

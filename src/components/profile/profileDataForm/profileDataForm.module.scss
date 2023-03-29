@@ -1,0 +1,75 @@
+.form {
+}
+.formik {
+   margin: 20px 0px 0px 0px;
+}
+.text{
+   font-size: 18px;
+   font-weight: 600;
+   margin: 0px 0px 5px 0px;
+   color: black;
+}
+.fullName {
+   margin: 0px 0px 20px 0px;
+   input {
+      margin: 0px 20px 0px 0px;
+      width: 240px;
+      height: 30px;
+      font-size: 18px;
+      border: 1px solid black;
+      border-radius: 5px;
+   }
+}
+.error{
+   background-color: #fff;
+   color: red;
+   padding: 0px 5px 0px 5px;
+}
+.submit {
+   button {
+      width: 90px;
+      height: 30px;
+      font-size: 18px;
+      border-radius: 5px;
+   }
+}
+.row{
+   display: flex;
+   align-items: center;
+}
+.lookingForAJob{
+   margin: 0px 0px 20px 0px;
+}
+.checkbox{
+   width: 20px;
+   height: 20px;
+}
+.description{
+   width: 240px;
+   height: 100px;
+   border: 1px solid black;
+   border-radius: 5px;
+   font-size: 18px;
+   margin: 0px 0px 30px 0px;
+}
+.column{
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   margin: 0px 0px 10px 15px;
+   font-size: 18px;
+}
+.contact{
+   width: 350px;
+   display: flex;
+   justify-content: space-between;
+   margin: 0px 0px 15px 0px;
+   input {
+      margin: 0px 20px 0px 0px;
+      width: 240px;
+      height: 25px;
+      font-size: 18px;
+      border: 1px solid black;
+      border-radius: 5px;
+   }
+}

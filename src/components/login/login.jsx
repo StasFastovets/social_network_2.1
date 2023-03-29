@@ -48,15 +48,15 @@ const Login = ({ active, setActive, isAuth, LogInTC }) => {
                   ({ values, errors, touched, handleChange }) => (
                      <Form className={s.form}>
                         <div className={s.form_login}>
-                           <input name='password' type='text' onChange={handleChange} values={values.login} placeholder='password' />
+                           <input name='password' type='text' onChange={handleChange} value={values.login} placeholder='password' />
                            <p>{errors.password && touched.password && errors.password}</p>
                         </div>
                         <div className={s.form_login}>
-                           <input name='email' type='email' onChange={handleChange} values={values.email} placeholder='Email' />
+                           <input name='email' type='email' onChange={handleChange} value={values.email} placeholder='Email' />
                            <p>{errors.email && touched.email && errors.email}</p>
                         </div>
                         <div className={s.form_remember}>
-                           <input name='remember' type='checkbox' onChange={handleChange} values={values.remember ? 'true' : 'false'} />
+                           <input name='remember' type='checkbox' onChange={handleChange} value={values.remember ? 'true' : 'false'} />
                            <p>remember me</p>
                         </div>
                         <div className={s.form_submit}>

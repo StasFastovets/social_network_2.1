@@ -6,7 +6,7 @@ import Profile from './Profile';
 import { useParams } from 'react-router-dom';
 import { compose } from 'redux';
 import { updataStatusOfUserTC } from './../../redux/profileReducer';
-import { getStatusOfUserTC } from './../../redux/profileReducer';
+import { getStatusOfUserTC, saveProfileTC } from './../../redux/profileReducer';
 import { getAuthorizedUserID, getIsAuth, getIsLoading, getProfile, getStatus, getProfilePhoto } from '../../redux/profile_selectors ';
 import { savePhotoTC } from '../../redux/authReducer';
 
@@ -36,9 +36,10 @@ let mapStateToProps = (state) => {
       profile: getProfile(state),
       status: getStatus(state),
       isLoading: getIsLoading(state),
+      error: state.profile.error
    }
 }
 
 
 export default compose(connect(mapStateToProps,
-   { getUserProfileTC, updataStatusOfUserTC, getStatusOfUserTC, savePhotoTC }), withAuthRedirect)(ProfileAPIContainer)
+   { getUserProfileTC, updataStatusOfUserTC, getStatusOfUserTC, savePhotoTC, saveProfileTC }), withAuthRedirect)(ProfileAPIContainer)

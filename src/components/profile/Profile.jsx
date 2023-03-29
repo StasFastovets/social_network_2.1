@@ -2,8 +2,18 @@ import s from './Profile.module.scss'
 import Preloader from './../other/preloader/preloader'
 import ava from './../../img/ava.jpg'
 import ProfileStatus from './profileStatus/ProfileStatus'
+import { useState } from 'react'
+import ProfileDataForm from './profileDataForm/ProfileDataForm'
+import { ErrorResponse } from '@remix-run/router'
 
-const Profile = ({ profile, authorizedUserID, userID, savePhotoTC, isLoading, ...props }) => {
+const Profile = ({ profile, authorizedUserID, userID, savePhotoTC, isLoading, saveProfileTC, error, ...props }) => {
+
+   let [editMode, setEditMode] = useState(false)
+
+   const goToEditMode = () => {
+      setEditMode(true)
+   }
+
    if (profile == null || profile == undefined || isLoading) {
       return <Preloader />
    }
@@ -24,16 +34,15 @@ const Profile = ({ profile, authorizedUserID, userID, savePhotoTC, isLoading, ..
             <div className={s.upload}>
                {userID == authorizedUserID && <input type='file' onChange={onProfilePhotoSelected} />}
             </div>
-            {editMode ? <ProfileDataForm profile={profile} /> : <ProfileData profile={profile} />}
-            const name = (params) => {
-const d
-            }
+            {userID === authorizedUserID && editMode ?
+               <ProfileDataForm profile={profile} userID={userID} saveProfileTC={saveProfileTC} setEditMode={setEditMode} error={error} /> :
+               <ProfileData profile={profile} authorizedUserID={authorizedUserID} userID={userID} goToEditMode={goToEditMode} />}
          </div>
       </div>
    )
 }
 
-const ProfileData = ({ profile }) => {
+const ProfileData = ({ profile, userID, authorizedUserID, goToEditMode }) => {
    return (
       <div className={s.info_text}>
          <div className={s.info_fullName}>{profile.fullName}</div>
@@ -53,6 +62,7 @@ const ProfileData = ({ profile }) => {
                return <Contacts key={key} contactTitle={key} contactValue={profile.contacts[key]} />
             })}
          </div>
+         {userID === authorizedUserID && <div className={s.button_owner}><button onClick={goToEditMode}>Edit</button></div>}
       </div>
    )
 }
@@ -68,12 +78,6 @@ const Contacts = ({ contactTitle, contactValue }) => {
    )
 }
 
-const ProfileDataForm = () => {
-   return (
-      <></>
-
-   )
-}
 
 export default Profile;
 
