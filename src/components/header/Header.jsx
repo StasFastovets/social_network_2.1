@@ -5,6 +5,7 @@ import { useState } from 'react'
 import LoginContainer from '../login/LoginContainer'
 import Menu from '../burger/Menu'
 import Preloader from '../other/preloader/preloader'
+import cn from 'classnames'
 
 const Header = (props) => {
   const [active, setActive] = useState(false)

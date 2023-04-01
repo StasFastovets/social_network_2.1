@@ -10,7 +10,8 @@ const Paginator = ({ totalUsersCount, portionSize, ...props }) => {             
       pages.push(i)
    }
 
-   let [portionNumber, setPortionNumber] = useState(1)
+   let [portionNumber, setPortionNumber] = useState(props.portionNumber)
+
 
    let portionCount = Math.ceil(pagesCount / portionSize)                        // количество порций
    let leftPortionNumber = (portionNumber - 1) * portionSize + 1
@@ -23,7 +24,7 @@ const Paginator = ({ totalUsersCount, portionSize, ...props }) => {             
          }
          {pages
             .filter(p => p >= leftPortionNumber && p <= rightPortionNumber)
-            .map(p => <span onClick={() => props.onPageChanget(p)} className={props.currentPage === p ? s.currentPage : s.page} key={p}>
+            .map(p => <span onClick={() => props.onPageChanget(p, portionNumber)} className={props.currentPage === p ? s.currentPage : s.page} key={p}>
                {p}
             </span>)}
          {portionNumber < portionCount ? <button onClick={() => setPortionNumber(portionNumber + 1)} className={s.button}>Next</button> :

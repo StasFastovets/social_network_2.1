@@ -1,4 +1,4 @@
-import { getAuth } from './../API/api';
+import { getAuth, getCaptchaUrl } from './../API/api';
 import { logOut } from './../API/api';
 import { logIn, getUser, savePhoto } from './../API/api';
 import { setProfilePhotosAC } from './profileReducer';
@@ -9,6 +9,7 @@ const SET_PROFILE = 'auth/SET_PROFILE'
 const IS_LOADING = 'auth/IS_LOADING'
 const SET_USER = 'auth/SET_USER'
 const SET_PHOTOS = 'auth/SET_PHOTOS'
+const SET_CAPTCHA = 'auth/SET_CAPTCHA'
 
 
 let initialState = {
@@ -17,6 +18,7 @@ let initialState = {
    login: null,
    isAuth: false,
    isLoading: false,
+   captcha: null,
    profile: {
       photos: {
          small: null,
@@ -52,6 +54,11 @@ const authReducer = (state = initialState, action) => {
             ...state,
             profile: { ...state.profile, photos: action.photos }
          }
+      case SET_CAPTCHA:
+         return {
+            ...state,
+            captcha: action.captcha
+         }
       default:
          return state
    }
@@ -62,55 +69,45 @@ const setUserDataAC = (id, email, login, isAuth) => ({ type: SET_USER_DATA, payl
 const setIsLoadingAC = (isLoading) => ({ type: IS_LOADING, isLoading })
 const setUserAC = (profile) => ({ type: SET_USER, profile })
 const setPhotosAC = (photos) => ({ type: SET_PHOTOS, photos })
+const setCaptchaAC = (captcha) => ({ type: SET_CAPTCHA, captcha })
 
-export const authTC = () => {
-   return (
-      (dispatch) => {
-         return (
-            getAuth().then(data => {
-               if (data.resultCode === 0) {
-                  let email = data.data.email
-                  let id = data.data.id
-                  let login = data.data.login
-                  dispatch(setUserDataAC(id, email, login, true))
-                  return getUser(id).then(data => {
-                     dispatch(setUserAC(data))
-                  })
-               }
-            })
-         )
-      }
-   )
+
+export const authTC = () => async (dispatch) => {
+   const response = await getAuth()
+   if (response.resultCode === 0) {
+      let email = response.data.email
+      let id = response.data.id
+      let login = response.data.login
+      dispatch(setUserDataAC(id, email, login, true))
+      const userData = await getUser(id)
+      dispatch(setUserAC(userData))
+   }
 }
 
-export const logOutTC = () => {
-   return (
-      (dispatch) => {
-         dispatch(setIsLoadingAC(true))
-         return (
-            logOut().then(data => {
-               if (data.resultCode === 0) {
-                  dispatch(setUserDataAC(null, null, null, false))
-                  dispatch(setIsLoadingAC(false))
-               }
-            })
-         )
-      }
-   )
+export const logOutTC = () => async (dispatch) => {
+   dispatch(setIsLoadingAC(true))
+   const response = await logOut()
+   if (response.resultCode === 0) {
+      dispatch(setUserDataAC(null, null, null, false))
+      dispatch(setIsLoadingAC(false))
+   }
 }
 
-export const LogInTC = (email, password, rememberMe) => {
-   return (
-      (dispatch) => {
-         return (
-            logIn(email, password, rememberMe).then(data => {
-               if (data.resultCode === 0) {
-                  dispatch(authTC())
-               }
-            })
-         )
+export const LogInTC = (email, password, rememberMe, captcha) => async (dispatch) => {
+   let response = await logIn(email, password, rememberMe, captcha)
+   if (response.resultCode === 0) {
+      dispatch(authTC())
+   } else {
+      if (response.resultCode === 10) {
+         dispatch(getCaptchaTC())
       }
-   )
+   }
+}
+
+export const getCaptchaTC = () => async (dispatch) => {
+   const response = await getCaptchaUrl()
+   const captcha = response.url
+   dispatch(setCaptchaAC(captcha))
 }
 
 export const savePhotoTC = (photo) => async (dispatch) => {

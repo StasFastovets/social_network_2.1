@@ -1,11 +1,10 @@
-import logo from './logo.svg';
 import './App.css';
-import { Route, Routes, useHistory } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import HeaderContainer from './components/header/HeaderContainer';
 import Navigation from './components/navbar/navbar';
 import ProfileContainer from './components/profile/ProfileContainer';
 import LoginInfo from './components/login/login_info';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { InitializedAppTC } from './redux/appReducer';
 import Preloader from './components/other/preloader/preloader';
@@ -13,6 +12,7 @@ import HomePage from './components/home/HomePage';
 import NotFoundPage from './components/not_found_page/NotFoundPage';
 import SettingsContainer from './components/settings/SettingsContainer';
 import React from 'react';
+
 
 const DialogsContainer = React.lazy(() => import('./components/dialogs//DialogsContainer'));
 const UsersContainer = React.lazy(() => import('./components/users/UsersContainer'));

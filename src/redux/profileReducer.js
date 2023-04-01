@@ -68,44 +68,24 @@ export const setIsLoadingAC = (isLoading) => ({ type: IS_LOADING, isLoading })
 export const setProfilePhotosAC = (photos) => ({ type: SET_PHOTOS, photos })
 export const setErrorAC = (error) => ({ type: SET_ERROR, error })
 
-export const getUserProfileTC = (userID) => {
-   return (
-      (dispatch) => {
-         return (
-            getUser(userID).then(data => {
-               dispatch(setUserProfileAC(data))
-            })
-         )
-      }
-   )
+
+export const getUserProfileTC = (userID) => async (dispatch) => {
+   let response = await getUser(userID)
+   dispatch(setUserProfileAC(response))
 }
 
-export const getStatusOfUserTC = (id) => {
-   return (
-      (dispatch) => {
-         return (
-            getStatusOfUser(id).then(data => {
-               dispatch(setStatusOfUserAC(data))
-            })
-         )
-      }
-   )
+export const getStatusOfUserTC = (id) => async (dispatch) => {
+   const response = await getStatusOfUser(id)
+   dispatch(setStatusOfUserAC(response))
 }
 
-export const updataStatusOfUserTC = (status) => {
-   return (
-      (dispatch) => {
-         dispatch(setIsLoadingAC(true))
-         return (
-            updateStatusOfUser(status).then(data => {
-               if (data.resultCode == 0) {
-                  dispatch(setStatusOfUserAC(status))
-                  dispatch(setIsLoadingAC(false))
-               }
-            })
-         )
-      }
-   )
+export const updataStatusOfUserTC = (status) => async (dispatch) => {
+   dispatch(setIsLoadingAC(true))
+   const response = await updateStatusOfUser(status)
+   if (response.resultCode == 0) {
+      dispatch(setStatusOfUserAC(status))
+      dispatch(setIsLoadingAC(false))
+   }
 }
 
 export const saveProfileTC = (profile, userID) => async (dispatch) => {

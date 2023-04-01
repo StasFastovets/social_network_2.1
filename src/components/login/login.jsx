@@ -1,10 +1,10 @@
 import s from './login.module.scss'
-import { Formik, Form, Field } from 'formik'
+import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
-import { Navigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom';
+import cn from 'classnames'
 
 const loginSchema = Yup.object().shape({
    password: Yup.string()
@@ -18,7 +18,7 @@ const loginSchema = Yup.object().shape({
 })
 
 
-const Login = ({ active, setActive, isAuth, LogInTC }) => {
+const Login = ({ active, setActive, isAuth, LogInTC, captcha }) => {
 
    if (isAuth) {
       setActive(false)
@@ -36,14 +36,14 @@ const Login = ({ active, setActive, isAuth, LogInTC }) => {
    }, [isAuth]);
 
    const handleSubmit = (values) => {
-      LogInTC(values.email, values.password, values.remember);
+      LogInTC(values.email, values.password, values.remember, values.captcha);
    };
 
 
    return (
-      <div className={active ? `${s.login} ${s.login_active}` : s.login} onClick={() => setActive(false)}>
-         <div className={active ? `${s.login_content} ${s.login_content_active}` : s.login} onClick={e => e.stopPropagation()}>
-            <Formik initialValues={{ password: '', email: '', remember: false }} validationSchema={loginSchema} onSubmit={handleSubmit}>
+      <div className={active ? cn(s.login, s.login_active) : s.login} onClick={() => setActive(false)}>
+         <div className={active ? cn(s.login_content, s.login_content_active) : s.login} onClick={e => e.stopPropagation()}>
+            <Formik initialValues={{ password: '', email: '', remember: false, captcha: '' }} validationSchema={loginSchema} onSubmit={handleSubmit}>
                {
                   ({ values, errors, touched, handleChange }) => (
                      <Form className={s.form}>
@@ -59,6 +59,10 @@ const Login = ({ active, setActive, isAuth, LogInTC }) => {
                            <input name='remember' type='checkbox' onChange={handleChange} value={values.remember ? 'true' : 'false'} />
                            <p>remember me</p>
                         </div>
+                        {captcha && <div className={s.captcha}>
+                           <img src={captcha} />
+                           <input name='captcha' type='text' onChange={handleChange} value={values.captcha} />
+                        </div>}
                         <div className={s.form_submit}>
                            <button type='submit'>Login</button>
                         </div>
