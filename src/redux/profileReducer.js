@@ -6,6 +6,7 @@ const SET_STATUS = 'profile/SET_STATUS'
 const IS_LOADING = 'profile/IS_LOADING'
 const SET_PHOTOS = 'profile/SET_PHOTOS'
 const SET_ERROR = 'profile/SET_ERROR'
+const NULL_ERROR = 'profile/NULL_ERROR'
 
 let initialState = {
    profile: {
@@ -26,7 +27,7 @@ let initialState = {
    },
    status: '',
    isLoading: false,
-   error: []
+   contactsErrors: []
 }
 
 const profileReducer = (state = initialState, action) => {
@@ -52,9 +53,19 @@ const profileReducer = (state = initialState, action) => {
             profile: { ...state.profile, photos: action.photos }
          }
       case SET_ERROR:
+         const errorMessages = action.error
+         const fieldNames = errorMessages.map(errorMessage => {
+            const fieldName = errorMessage.match(/\(([^)]+)\)/)[1].split('->')[1]
+            return fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
+         })
          return {
             ...state,
-            error: action.error
+            contactsErrors: fieldNames
+         }
+      case NULL_ERROR:
+         return {
+            ...state,
+            contactsErrors: []
          }
       default:
          return state
@@ -67,6 +78,7 @@ export const setStatusOfUserAC = (status) => ({ type: SET_STATUS, status })
 export const setIsLoadingAC = (isLoading) => ({ type: IS_LOADING, isLoading })
 export const setProfilePhotosAC = (photos) => ({ type: SET_PHOTOS, photos })
 export const setErrorAC = (error) => ({ type: SET_ERROR, error })
+export const setNullErrorAC = () => ({ type: NULL_ERROR })
 
 
 export const getUserProfileTC = (userID) => async (dispatch) => {
@@ -88,8 +100,24 @@ export const updataStatusOfUserTC = (status) => async (dispatch) => {
    }
 }
 
+// export const updataStatusOfUserTC = (status) => async (dispatch) => {
+//    try {
+//       dispatch(setIsLoadingAC(true))
+//       const response = await updateStatusOfUser(status)
+//       if (response.resultCode == 0) {
+//          dispatch(setStatusOfUserAC(status))
+//       }
+//    } catch (error) {
+//       // Handle any errors here
+//       console.error('Error updating status:', error);
+//    } finally {
+//       dispatch(setIsLoadingAC(false))
+//    }
+// }
+
 export const saveProfileTC = (profile, userID) => async (dispatch) => {
    dispatch(setIsLoadingAC(true))
+   dispatch(setNullErrorAC())
    let response = await saveProfile(profile)
    if (response.resultCode == 0) {
       dispatch(getUserProfileTC(userID))
@@ -100,6 +128,22 @@ export const saveProfileTC = (profile, userID) => async (dispatch) => {
       return Promise.reject()
    }
 }
+// export const saveProfileTC = (profile, userID) => async (dispatch) => {
+//    try {
+//       dispatch(setIsLoadingAC(true))
+//       let response = await saveProfile(profile)
+//       if (response.resultCode === 0) {
+//          dispatch(getUserProfileTC(userID))
+//       } else {
+//          dispatch(setErrorAC(response.messages))
+//          return Promise.reject()
+//       }
+//    } catch (error) {
+//       console.error('Error saving profile:', error.message);
+//    } finally {
+//       dispatch(setIsLoadingAC(false))
+//    }
+// }
 
 
 export default profileReducer

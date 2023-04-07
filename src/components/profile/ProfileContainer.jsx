@@ -36,7 +36,7 @@ let mapStateToProps = (state) => {
       profile: getProfile(state),
       status: getStatus(state),
       isLoading: getIsLoading(state),
-      error: state.profile.error
+      contactsErrors: state.profile.contactsErrors
    }
 }
 

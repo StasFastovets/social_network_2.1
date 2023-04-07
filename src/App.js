@@ -12,6 +12,8 @@ import HomePage from './components/home/HomePage';
 import NotFoundPage from './components/not_found_page/NotFoundPage';
 import SettingsContainer from './components/settings/SettingsContainer';
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import ErrorFallback from './components/other/errorFallback/ErrorFallback';
 
 
 const DialogsContainer = React.lazy(() => import('./components/dialogs//DialogsContainer'));
@@ -20,6 +22,10 @@ const NewsContainer = React.lazy(() => import('./components/news/NewsContainer')
 const MusicContainer = React.lazy(() => import('./components/music/MusicContainer'));
 
 const App = (props) => {
+
+  // window.onunhandledrejection = function (event) {
+  //   console.error('Unhandled promise rejection:', event.reason);
+  // };
 
   useEffect(() => {
     props.InitializedAppTC()
@@ -36,18 +42,20 @@ const App = (props) => {
         <Navigation />
       </div>
       <Suspense fallback={<Preloader />}>
-        <Routes>
-          <Route path='/' element={<HomePage />} />
-          <Route path='/profile/:userID' element={<ProfileContainer />} />
-          <Route path='/profile/' element={<ProfileContainer />} />
-          <Route path='/dialogs/*' element={<DialogsContainer />} />
-          <Route path='/users/' element={<UsersContainer />} />
-          <Route path='/login/' element={<LoginInfo />} />
-          <Route path='/news/' element={<NewsContainer />} />
-          <Route path='/music/' element={<MusicContainer />} />
-          <Route path='/settings/' element={<SettingsContainer />} />
-          <Route path='*' element={<NotFoundPage />} />
-        </Routes>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>    
+          <Routes>
+            <Route path='/' element={<HomePage />} />
+            <Route path='/profile/:userID' element={<ProfileContainer />} />
+            <Route path='/profile/' element={<ProfileContainer />} />
+            <Route path='/dialogs/*' element={<DialogsContainer />} />
+            <Route path='/users/' element={<UsersContainer />} />
+            <Route path='/login/' element={<LoginInfo />} />
+            <Route path='/news/' element={<NewsContainer />} />
+            <Route path='/music/' element={<MusicContainer />} />
+            <Route path='/settings/' element={<SettingsContainer />} />
+            <Route path='*' element={<NotFoundPage />} />
+          </Routes>
+        </ErrorBoundary>
       </Suspense>
     </div >
   );
@@ -62,4 +70,4 @@ let mapStateToProps = (state) => {
 
 const AppContainer = connect(mapStateToProps, { InitializedAppTC })(App)
 
-export default AppContainer;
+export default AppContainer

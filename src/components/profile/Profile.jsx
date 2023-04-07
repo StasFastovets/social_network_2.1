@@ -4,9 +4,9 @@ import ava from './../../img/ava.jpg'
 import ProfileStatus from './profileStatus/ProfileStatus'
 import { useState } from 'react'
 import ProfileDataForm from './profileDataForm/ProfileDataForm'
-import { ErrorResponse } from '@remix-run/router'
 
-const Profile = ({ profile, authorizedUserID, userID, savePhotoTC, isLoading, saveProfileTC, error, ...props }) => {
+
+const Profile = ({ profile, authorizedUserID, userID, savePhotoTC, isLoading, saveProfileTC, contactsErrors, ...props }) => {
 
    let [editMode, setEditMode] = useState(false)
 
@@ -35,7 +35,7 @@ const Profile = ({ profile, authorizedUserID, userID, savePhotoTC, isLoading, sa
                {userID == authorizedUserID && <input type='file' onChange={onProfilePhotoSelected} />}
             </div>
             {userID === authorizedUserID && editMode ?
-               <ProfileDataForm profile={profile} userID={userID} saveProfileTC={saveProfileTC} setEditMode={setEditMode} error={error} /> :
+               <ProfileDataForm profile={profile} userID={userID} saveProfileTC={saveProfileTC} setEditMode={setEditMode} contactsErrors={contactsErrors} /> :
                <ProfileData profile={profile} authorizedUserID={authorizedUserID} userID={userID} goToEditMode={goToEditMode} />}
          </div>
       </div>

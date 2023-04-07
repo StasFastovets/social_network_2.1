@@ -1,8 +1,10 @@
-
+import s from './music.module.scss'
 
 const MusicContainer = (props) => {
    return (
-      <div>Music</div>
+      <div className={s.body}>
+       music
+      </div>
    )
 }
 

@@ -60,16 +60,21 @@
    font-size: 18px;
 }
 .contact{
-   width: 350px;
    display: flex;
    justify-content: space-between;
    margin: 0px 0px 15px 0px;
    input {
-      margin: 0px 20px 0px 0px;
-      width: 240px;
+      margin: 0px 20px 0px 20px;
+      flex: 0 0 240px;
       height: 25px;
       font-size: 18px;
       border: 1px solid black;
       border-radius: 5px;
+   }
+   .header {
+      flex: 0 0 85px;
+   }
+   .error {
+      flex: 1 0 auto;
    }
 }
