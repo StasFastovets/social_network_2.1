@@ -1,8 +1,9 @@
 import { NavLink } from 'react-router-dom';
 import s from './navbar.module.scss';
+import cn from 'classnames'
 
 const Navigation = () => {
-   let style = data => data.isActive ? `${s.link} ${s.active}` : s.link
+   let style = data => data.isActive ? cn(s.link, s.active) : s.link
    return (
       <nav className={s.navigation}>
          <ul>

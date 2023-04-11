@@ -78,6 +78,5 @@ const Contacts = ({ contactTitle, contactValue }) => {
    )
 }
 
-
 export default Profile;
 

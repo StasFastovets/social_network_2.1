@@ -20,14 +20,10 @@ const User = ({ user, followUnfollowUserTC, followingInProgress }) => {
                >UNFOLLOW</button>}
          </div>
          <div className={s.text}>
-            <div className={s.text_left}>
                <div className={s.name}>{user.name}</div>
                <div className={s.status}>{user.status}</div>
-            </div>
-            <div className={s.text_right}>
                <div className={s.country}>{'user.location.country'}</div>
                <div className={s.city}>{'user.location.city'}</div>
-            </div>
          </div>
       </div>)
 }
