@@ -37,28 +37,6 @@ const App = (props) => {
   }
 
   return (
-    // <div className='app-wrapper'>
-    //   <HeaderContainer />
-    //   <div className='navigation-app'>
-    //     <Navigation />
-    //   </div>
-    //   <Suspense fallback={<Preloader />}>
-    //     <ErrorBoundary FallbackComponent={ErrorFallback}>    
-    //       <Routes>
-    //         <Route path='/' element={<HomePage />} />
-    //         <Route path='/profile/:userID' element={<ProfileContainer />} />
-    //         <Route path='/profile/' element={<ProfileContainer />} />
-    //         <Route path='/dialogs/*' element={<DialogsContainer />} />
-    //         <Route path='/users/' element={<UsersContainer />} />
-    //         <Route path='/login/' element={<LoginInfo />} />
-    //         <Route path='/news/' element={<NewsContainer />} />
-    //         <Route path='/music/' element={<MusicContainer />} />
-    //         <Route path='/settings/' element={<SettingsContainer />} />
-    //         <Route path='*' element={<NotFoundPage />} />
-    //       </Routes>
-    //     </ErrorBoundary>
-    //   </Suspense>
-    // </div >
     <div className={style.wrapper}>
       <div className={style.container}>
         <div className={style.body}>
