@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import Header from "./Header";
-import { authTC, logOutTC } from './../../redux/authReducer';
+import { authTC, logOutTC } from '../../redux/authReducer';
+import { AppStateType } from "../../redux/redux";
 
 
 // const HeaderAPIContainer = (props) => {
@@ -11,7 +12,22 @@ import { authTC, logOutTC } from './../../redux/authReducer';
 //    )
 // }
 
-let mapStateToProps = (state) => {
+type MapStatePropsType = {
+   id: number | null,
+   email: string | null,
+   login: string | null,
+   isAuth: boolean,
+   photoSmall: string | null,
+   isLoading: boolean,
+}
+
+type MapDispatchPropsType = {
+   logOutTC: () => void
+}
+
+type OwnPropsType = {} 
+
+let mapStateToProps = (state: AppStateType): MapStatePropsType => {
    return {
       id: state.auth.id,
       email: state.auth.email,
@@ -24,6 +40,6 @@ let mapStateToProps = (state) => {
 
 
 // const HeaderContainer = connect(mapStateToProps, { authTC, logOutTC })(HeaderAPIContainer)
-const HeaderContainer = connect(mapStateToProps, { logOutTC })(Header)
+const HeaderContainer = connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(mapStateToProps, { logOutTC })(Header)
 
 export default HeaderContainer

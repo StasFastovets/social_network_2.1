@@ -7,8 +7,16 @@ import Menu from '../burger/Menu'
 import Preloader from '../other/preloader/preloader'
 import cn from 'classnames'
 
-const Header = (props) => {
-  const [active, setActive] = useState(false)
+type HeaderPropsType = {
+  logOutTC: () => void
+  isAuth: boolean
+  photoSmall: string | null
+  isLoading: boolean
+  login: string | null
+}
+
+const Header: React.FC<HeaderPropsType> = (props) => {
+  const [active, setActive] = useState<boolean>(false)
 
   if (props.isLoading) {
     return <Preloader />

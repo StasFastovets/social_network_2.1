@@ -2,8 +2,14 @@ import { NavLink } from 'react-router-dom';
 import s from './navbar.module.scss';
 import cn from 'classnames'
 
+type NavLinkProps = {
+   to: string;
+   isActive?: boolean;
+   isPending?: boolean;
+}
+
 const Navigation = () => {
-   let style = data => data.isActive ? cn(s.link, s.active) : s.link
+   let style = (data: {isActive: boolean; isPending?: boolean}) => data.isActive ? cn(s.link, s.active) : s.link
    return (
       <nav className={s.navigation}>
          <ul>

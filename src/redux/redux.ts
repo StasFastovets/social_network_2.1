@@ -14,10 +14,13 @@ let reducers = combineReducers({
    users: usersReducer
 })
 
+type ReducersType = typeof reducers
+export type AppStateType = ReturnType<ReducersType>     // служит для установления возвращаемого из функции типа
+
+//@ts-ignore                 // typescript игнорирует строчку ниже
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = legacy_createStore(reducers, composeEnhancers(applyMiddleware(thunkMiddleware)));
 
 
-window.store = store
 
 export default store

@@ -11,7 +11,7 @@ const NULL_ERROR = 'profile/NULL_ERROR'
 
 export type InitialStateType = {
    profile: InitialStateProfileType,
-   status: string | null,
+   status: string,
    isLoading: boolean,
    contactsErrors: string[]
 }
@@ -36,13 +36,14 @@ let initialState: InitialStateType = {
       lookingForAJob: false,
       lookingForAJobDescription: null,
       fullName: null,
+      aboutMe: null,
    },
    status: '',
    isLoading: false,
    contactsErrors: []
 }
 
-const profileReducer = (state = initialState, action: any) => {
+const profileReducer = (state = initialState, action: any): InitialStateType => {
    switch (action.type) {
       case SET_USER:
          return {
@@ -66,14 +67,16 @@ const profileReducer = (state = initialState, action: any) => {
          }
       case SET_ERROR:
          const errorMessages: string[] = action.error;
-         const fieldNames = errorMessages.map(errorMessage => {
+         const fieldNames = errorMessages.reduce<string[]>((acc, errorMessage) => {
             const match = errorMessage.match(/\(([^)]+)\)/);
             if (match) {
                const fieldName = match[1].split('->')[1];
-               return fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+               if (fieldName) {
+                  acc.push(fieldName.charAt(0).toUpperCase() + fieldName.slice(1));
+               }
             }
-            return null;
-         })
+            return acc;
+         }, []);
          return {
             ...state,
             contactsErrors: fieldNames

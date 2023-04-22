@@ -3,7 +3,13 @@ import React, { useEffect, useState } from 'react';
 import Preloader from '../../other/preloader/preloader';
 import { useParams } from 'react-router-dom';
 
-const ProfileStatus = (props) => {
+type ProfileStatusType = {
+   status: string | null
+   updataStatusOfUserTC: (status: string) => void
+   isLoading: boolean
+}
+
+const ProfileStatus: React.FC<ProfileStatusType> = (props) => {
    let { userID } = useParams()
 
    let [editMode, setEditMode] = useState(false)
@@ -20,10 +26,10 @@ const ProfileStatus = (props) => {
 
    const deactivateEditMode = () => {
       setEditMode(false)
-      props.updataStatusOfUserTC(status)
+      props.updataStatusOfUserTC(status ?? '')
    }
 
-   const onStatusChange = (e) => {
+   const onStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setStatus(e.currentTarget.value)
    }
 
@@ -48,7 +54,7 @@ const ProfileStatus = (props) => {
                <span onClick={activateEditMode}>{props.status || 'No status'}</span>
             </div> :
             <div className={s.status_buttom}>
-               <input onChange={onStatusChange} autoFocus={true} onBlur={deactivateEditMode} value={status} />
+               <input onChange={onStatusChange} autoFocus={true} onBlur={deactivateEditMode} value={status ?? ''} />
             </div>
          }
       </div>

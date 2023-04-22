@@ -34,6 +34,7 @@ export type InitialStateProfileType = {
    fullName: string | null,
    photos: InitialStateProfilePhotosType,
    contacts: InitialStateProfileContactsType
+   aboutMe: string | null
 }
 
 export type InitialStateType = {
@@ -58,6 +59,7 @@ let initialState: InitialStateType = {
       lookingForAJob: false,
       lookingForAJobDescription: null,
       fullName: null,
+      aboutMe: null,
       contacts: {
          github: null,
          vk: null,

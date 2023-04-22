@@ -18,7 +18,7 @@ const profileDataSchema = Yup.object().shape({
 })
 
 
-const ProfileDataForm = ({ profile: { fullName, lookingForAJob, lookingForAJobDescription, aboutMe, contacts }, userID, saveProfileTC,
+const ProfileDataForm = ({ profile: { fullName, lookingForAJob, lookingForAJobDescription, aboutMe,  contacts }, userID, saveProfileTC,
    setEditMode, contactsErrors }) => {
 
    const [errorsList, setErrors] = useState([]);
@@ -26,7 +26,7 @@ const ProfileDataForm = ({ profile: { fullName, lookingForAJob, lookingForAJobDe
    useEffect(() => {
       setErrors(contactsErrors);
    }, [contactsErrors]);
- 
+
    let initialValues = {
       fullName: fullName,
       lookingForAJob: lookingForAJob,
@@ -43,17 +43,6 @@ const ProfileDataForm = ({ profile: { fullName, lookingForAJob, lookingForAJobDe
          mainLink: contacts.mainLink
       }
    }
-
-   // const contactError = {
-   //    facebook: 'Error message for Facebook',
-   //    website: 'Error message for Website',
-   //    vk: 'Error message for VK',
-   //    twitter: 'Error message for Twitter',
-   //    instagram: 'Error message for Instagram',
-   //    youtube: 'Error message for Youtube',
-   //    github: 'Error message for Github',
-   //    mainLink: 'Error message for Main Link',
-   // }
 
    const handleSubmit = async (values) => {
       await saveProfileTC(values, userID);
@@ -136,13 +125,6 @@ const ProfileDataForm = ({ profile: { fullName, lookingForAJob, lookingForAJobDe
                               <input name='contacts.mainLink' type='text' onChange={handleChange} value={values.contacts.mainLink} />
                               {errorsList.includes('MainLink') && <p className={s.error}>Enter correct url</p>}
                            </div>
-                           {/* {Object.keys(contacts).map(key => {
-                              return <div key={key} className={s.contact}>
-                                 <span>{key}:</span>
-                                 <input name={"contacts." + key} type='text' onChange={handleChange} value={values.contacts[key]} />
-                                 {errorsList.includes(key) && <p className={s.error}>error message</p>}
-                              </div>
-                           })} */}
                         </div>
                      </div>
                      <div className={s.submit}>

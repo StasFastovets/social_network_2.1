@@ -15,18 +15,29 @@ import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from './components/other/errorFallback/ErrorFallback';
 import Footer from './components/footer/Footer';
+import { AppStateType } from './redux/redux';
 
 
-const DialogsContainer = React.lazy(() => import('./components/dialogs//DialogsContainer'));
+const DialogsContainer = React.lazy(() => import('./components/dialogs/DialogsContainer'));
 const UsersContainer = React.lazy(() => import('./components/users/UsersContainer'));
 const NewsContainer = React.lazy(() => import('./components/news/NewsContainer'));
 const MusicContainer = React.lazy(() => import('./components/music/MusicContainer'));
 
-const App = (props) => {
 
-  // window.onunhandledrejection = function (event) {
-  //   console.error('Unhandled promise rejection:', event.reason);
-  // };
+type MapStatePropsType = {
+  initialized: boolean
+}
+
+type MapDispatchPropsType = {
+  InitializedAppTC: () => void
+}
+
+type OwnPropsType = {
+}
+
+type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType
+
+const App: React.FC<PropsType> = (props) => {
 
   useEffect(() => {
     props.InitializedAppTC()
@@ -74,12 +85,12 @@ const App = (props) => {
 }
 
 
-let mapStateToProps = (state) => {
+let mapStateToProps = (state: AppStateType): MapStatePropsType => {
   return {
     initialized: state.app.initialized
   }
 }
 
-const AppContainer = connect(mapStateToProps, { InitializedAppTC })(App)
+const AppContainer = connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(mapStateToProps, { InitializedAppTC })(App)
 
 export default AppContainer

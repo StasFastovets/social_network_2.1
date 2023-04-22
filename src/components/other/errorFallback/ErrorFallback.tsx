@@ -1,8 +1,12 @@
 import { useErrorBoundary } from "react-error-boundary";
 import s from './errorFallback.module.scss'
-import { classNames } from 'classnames';
 
-function ErrorFallback({ error }) {
+
+type ErrorFallbackType = {
+   error: Error
+}
+
+const ErrorFallback: React.FC<ErrorFallbackType> = ({ error }) => {
    const { resetBoundary } = useErrorBoundary();  // для сброса ошибки используем hook useErrorBoundary()
 
    return (
@@ -15,3 +19,4 @@ function ErrorFallback({ error }) {
 }
 
 export default ErrorFallback
+

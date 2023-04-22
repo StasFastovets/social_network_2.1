@@ -1,9 +1,17 @@
 import React from 'react';
-import s from './paginator.module.scss';
 import { useState } from 'react';
+import s from "./paginator.module.scss"
 
-
-const Paginator = ({ totalUsersCount, portionSize, ...props }) => {                    // paginator - постраничной вывод
+type PropsType = {
+   totalUsersCount: number
+   portionSize: number
+   pageSize: number
+   portionNumber: number
+   currentPage: number
+   onPageChanget: (pageNumber: number, portionNumber: number) => void
+}
+ 
+const Paginator: React.FC<PropsType> = ({ totalUsersCount, portionSize, ...props }) => {                    // paginator - постраничной вывод
    let pagesCount = Math.ceil(totalUsersCount / props.pageSize)                        // количество страниц, ceil - округляет в большую сторону
    let pages = []                                                                      // массив страниц
    for (let i = 1; i <= pagesCount; i++) {                                             //  for (let i = 1; i <= pagesCount; i++) {        
@@ -20,7 +28,7 @@ const Paginator = ({ totalUsersCount, portionSize, ...props }) => {             
    return (
       <div className={s.pages}>
          {portionNumber > 1 ? <button onClick={() => setPortionNumber(portionNumber - 1)} className={s.button}>Prev.</button> :
-            <button disabled='none' className={s.button}>Prev.</button>
+            <button disabled={true} className={s.button}>Prev.</button>
          }
          {pages
             .filter(p => p >= leftPortionNumber && p <= rightPortionNumber)
@@ -28,7 +36,7 @@ const Paginator = ({ totalUsersCount, portionSize, ...props }) => {             
                {p}
             </span>)}
          {portionNumber < portionCount ? <button onClick={() => setPortionNumber(portionNumber + 1)} className={s.button}>Next</button> :
-            <button disabled='none' className={s.button}>Next</button>
+            <button disabled={true} className={s.button}>Next</button>
          }
       </div>
    )

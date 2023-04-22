@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 const Menu = () => {
 
-   const [menuActive, setMenuActive] = useState(false)
+   const [menuActive, setMenuActive] = useState<boolean>(false)
 
    return (
       <div className={s.burger}>
