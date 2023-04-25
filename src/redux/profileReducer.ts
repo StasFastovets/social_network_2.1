@@ -1,6 +1,9 @@
+import { ThunkAction } from "redux-thunk";
 import { getUser, updateStatusOfUser } from "../API/api"
 import { getStatusOfUser, saveProfile } from '../API/api';
 import { InitialStateProfileType } from "./authReducer";
+import { InitialStateProfilePhotosType } from "./authReducer";
+import { AppStateType } from "./redux";
 
 const SET_USER = 'profile/SET_USER'
 const SET_STATUS = 'profile/SET_STATUS'
@@ -43,7 +46,10 @@ let initialState: InitialStateType = {
    contactsErrors: []
 }
 
-const profileReducer = (state = initialState, action: any): InitialStateType => {
+type ActionsTypes = SetUserProfileACType | SetStatusOfUserACType | IsLoadingACType | SetProfilePhotosACType | SetErrorACType |
+   SetNullErrorACType
+
+const profileReducer = (state = initialState, action: ActionsTypes): InitialStateType => {
    switch (action.type) {
       case SET_USER:
          return {
@@ -93,13 +99,13 @@ const profileReducer = (state = initialState, action: any): InitialStateType => 
 
 type SetUserProfileACType = {
    type: typeof SET_USER,
-   profile: InitialStateProfileType | null
+   profile: InitialStateProfileType 
 }
 export const setUserProfileAC = (profile: InitialStateProfileType): SetUserProfileACType => ({ type: SET_USER, profile })
 
 type SetStatusOfUserACType = {
    type: typeof SET_STATUS,
-   status: string | null
+   status: string 
 }
 export const setStatusOfUserAC = (status: string): SetStatusOfUserACType => ({ type: SET_STATUS, status })
 
@@ -109,11 +115,11 @@ type IsLoadingACType = {
 }
 export const setIsLoadingAC = (isLoading: boolean): IsLoadingACType => ({ type: IS_LOADING, isLoading })
 
-type SetProfilePhotosACType = {
+export type SetProfilePhotosACType = {
    type: typeof SET_PHOTOS,
-   photos: File | null
+   photos: InitialStateProfilePhotosType
 }
-export const setProfilePhotosAC = (photos: File): SetProfilePhotosACType => ({ type: SET_PHOTOS, photos })
+export const setProfilePhotosAC = (photos: InitialStateProfilePhotosType): SetProfilePhotosACType => ({ type: SET_PHOTOS, photos })
 
 type SetErrorACType = {
    type: typeof SET_ERROR,
@@ -124,20 +130,22 @@ export const setErrorAC = (error: string[]): SetErrorACType => ({ type: SET_ERRO
 type SetNullErrorACType = {
    type: typeof NULL_ERROR,
 }
-export const setNullErrorAC = () => ({ type: NULL_ERROR })
+export const setNullErrorAC = (): SetNullErrorACType => ({ type: NULL_ERROR })
 
 
-export const getUserProfileTC = (userID: number) => async (dispatch: any) => {
+type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsTypes>
+
+export const getUserProfileTC = (userID: number): ThunkType => async (dispatch) => {
    let response = await getUser(userID)
    dispatch(setUserProfileAC(response))
 }
 
-export const getStatusOfUserTC = (id: number) => async (dispatch: any) => {
+export const getStatusOfUserTC = (id: number): ThunkType => async (dispatch) => {
    const response = await getStatusOfUser(id)
    dispatch(setStatusOfUserAC(response))
 }
 
-export const updataStatusOfUserTC = (status: string) => async (dispatch: any) => {
+export const updataStatusOfUserTC = (status: string): ThunkType => async (dispatch) => {
    dispatch(setIsLoadingAC(true))
    const response = await updateStatusOfUser(status)
    if (response.resultCode == 0) {
@@ -146,7 +154,7 @@ export const updataStatusOfUserTC = (status: string) => async (dispatch: any) =>
    }
 }
 
-export const saveProfileTC = (profile: InitialStateProfileType, userID: number) => async (dispatch: any) => {
+export const saveProfileTC = (profile: InitialStateProfileType, userID: number): ThunkType => async (dispatch) => {
    dispatch(setIsLoadingAC(true))
    dispatch(setNullErrorAC())
    let response = await saveProfile(profile)

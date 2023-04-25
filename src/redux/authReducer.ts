@@ -1,11 +1,12 @@
+import { ThunkAction } from 'redux-thunk';
 import { getAuth, getCaptchaUrl } from '../API/api';
 import { logOut } from '../API/api';
 import { logIn, getUser, savePhoto } from '../API/api';
-import { setProfilePhotosAC } from './profileReducer';
+import { setProfilePhotosAC, SetProfilePhotosACType } from './profileReducer';
+import { AppStateType } from './redux';
 
 
 const SET_USER_DATA = 'auth/SET_USER_DATA'
-const SET_PROFILE = 'auth/SET_PROFILE'
 const IS_LOADING = 'auth/IS_LOADING'
 const SET_USER = 'auth/SET_USER'
 const SET_PHOTOS = 'auth/SET_PHOTOS'
@@ -77,17 +78,14 @@ let initialState: InitialStateType = {
    }
 }
 
-const authReducer = (state = initialState, action: any): InitialStateType => {
+type ActionsTypes = SetUserDataACType | SetIsLoadingACType | SetUserACType | SetPhotosACType | SetCaptchaACType | SetProfilePhotosACType
+
+const authReducer = (state = initialState, action: ActionsTypes): InitialStateType => {
    switch (action.type) {
       case SET_USER_DATA:
          return {
             ...state,
             ...action.payload
-         }
-      case SET_PROFILE:
-         return {
-            ...state,
-            profile: action.profile
          }
       case IS_LOADING:
          return {
@@ -118,7 +116,7 @@ type SetUserDataPayloadACType = {
    id: number | null,
    email: string | null,
    login: string | null,
-   isAuth: boolean | null
+   isAuth: boolean
 }
 type SetUserDataACType = {
    type: typeof SET_USER_DATA,
@@ -152,7 +150,9 @@ type SetCaptchaACType = {
 const setCaptchaAC = (captcha: string): SetCaptchaACType => ({ type: SET_CAPTCHA, captcha })
 
 
-export const authTC = () => async (dispatch: any) => {
+type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsTypes>
+
+export const authTC = (): ThunkType => async (dispatch) => {
    const response = await getAuth()
    if (response.resultCode === 0) {
       let email = response.data.email
@@ -164,7 +164,7 @@ export const authTC = () => async (dispatch: any) => {
    }
 }
 
-export const logOutTC = () => async (dispatch: any) => {
+export const logOutTC = (): ThunkType => async (dispatch) => {
    dispatch(setIsLoadingAC(true))
    const response = await logOut()
    if (response.resultCode === 0) {
@@ -173,7 +173,7 @@ export const logOutTC = () => async (dispatch: any) => {
    }
 }
 
-export const LogInTC = (email: string, password: string, rememberMe: boolean, captcha: string) => async (dispatch: any) => {
+export const LogInTC = (email: string, password: string, rememberMe: boolean, captcha: string): ThunkType => async (dispatch) => {
    let response = await logIn(email, password, rememberMe, captcha)
    if (response.resultCode === 0) {
       dispatch(authTC())
@@ -184,13 +184,13 @@ export const LogInTC = (email: string, password: string, rememberMe: boolean, ca
    }
 }
 
-export const getCaptchaTC = () => async (dispatch: any) => {
+export const getCaptchaTC = (): ThunkType => async (dispatch) => {
    const response = await getCaptchaUrl()
    const captcha = response.url
    dispatch(setCaptchaAC(captcha))
 }
 
-export const savePhotoTC = (photo: File) => async (dispatch: any) => {
+export const savePhotoTC = (photo: File): ThunkType => async (dispatch) => {
    dispatch(setIsLoadingAC(true))
    let response = await savePhoto(photo)
    if (response.resultCode === 0) {

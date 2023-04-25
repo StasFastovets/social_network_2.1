@@ -1,5 +1,7 @@
+import { ThunkAction } from 'redux-thunk';
 import { unfollowUser, getUsers, followUser } from '../API/api';
 import { InitialStateProfilePhotosType } from './authReducer';
+import { AppStateType } from './redux';
 
 const FOLLOW_UNFOLLOW = 'users/FOLLOW_UNFOLLOW'
 const SET_USERS = 'users/SET_USER'
@@ -39,7 +41,10 @@ let initialState: InitialStateType = {
    portionNumber: 1
 }
 
-const usersReducer = (state = initialState, action: any): InitialStateType => {
+type ActionsTypes = FollowUnfollowUsersACType | SetUsersACType | SetCurrentPageACType | SetAllUsersACType | SetIsFetchingACType |
+   ToggleFollowingProgressACType | SetPortionNumberACType
+
+const usersReducer = (state = initialState, action: ActionsTypes): InitialStateType => {
 
    switch (action.type) {
       case FOLLOW_UNFOLLOW:
@@ -120,9 +125,11 @@ type SetPortionNumberACType = {
 export const setPortionNumber = (portionNumber: number): SetPortionNumberACType => ({ type: SET_PORTION_NUMBER, portionNumber })
 
 
-export const getUsersTC = (currentPage: number, pageSize: number) => {
+type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsTypes>
+
+export const getUsersTC = (currentPage: number, pageSize: number): ThunkAction<void, AppStateType, unknown, ActionsTypes> => {
    return (
-      (dispatch: any) => {
+      (dispatch) => {
          dispatch(setIsFetching(true))
          getUsers(currentPage, pageSize).then(data => {
             dispatch(setUsers(data.items))
@@ -133,8 +140,7 @@ export const getUsersTC = (currentPage: number, pageSize: number) => {
    )
 }
 
-
-export const followUnfollowUserTC = (userID: number, follow: boolean) => async (dispatch: any) => {
+export const followUnfollowUserTC = (userID: number, follow: boolean): ThunkType => async (dispatch) => {
    dispatch(toggleFollowingProgress(true, userID))
    const apiCall = follow ? followUser : unfollowUser;
    const response = await apiCall(userID)
