@@ -1,5 +1,5 @@
 import { ThunkAction } from 'redux-thunk';
-import { getAuth, getCaptchaUrl } from '../API/api';
+import { getAuth, getCaptchaUrl, ResultCode } from '../API/api';
 import { logOut } from '../API/api';
 import { logIn, getUser, savePhoto } from '../API/api';
 import { setProfilePhotosAC, SetProfilePhotosACType } from './profileReducer';
@@ -112,49 +112,56 @@ const authReducer = (state = initialState, action: ActionsTypes): InitialStateTy
    }
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
 type SetUserDataPayloadACType = {
    id: number | null,
    email: string | null,
    login: string | null,
    isAuth: boolean
 }
+
 type SetUserDataACType = {
    type: typeof SET_USER_DATA,
    payload: SetUserDataPayloadACType
 }
+
 const setUserDataAC = (id: number | null, email: string | null, login: string | null, isAuth: boolean): SetUserDataACType =>
    ({ type: SET_USER_DATA, payload: { id, email, login, isAuth } })
-
+////////////////////////////////////////////////////////////////////////////////////////////////
 type SetIsLoadingACType = {
    type: typeof IS_LOADING,
    isLoading: boolean
 }
-const setIsLoadingAC = (isLoading: boolean): SetIsLoadingACType => ({ type: IS_LOADING, isLoading })
 
+const setIsLoadingAC = (isLoading: boolean): SetIsLoadingACType => ({ type: IS_LOADING, isLoading })
+////////////////////////////////////////////////////////////////////////////////////////////////////
 type SetUserACType = {
    type: typeof SET_USER,
    profile: InitialStateProfileType
 }
-const setUserAC = (profile: InitialStateProfileType): SetUserACType => ({ type: SET_USER, profile })
 
+const setUserAC = (profile: InitialStateProfileType): SetUserACType => ({ type: SET_USER, profile })
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 type SetPhotosACType = {
    type: typeof SET_PHOTOS,
    photos: InitialStateProfilePhotosType
 }
-const setPhotosAC = (photos: InitialStateProfilePhotosType): SetPhotosACType => ({ type: SET_PHOTOS, photos })
 
+const setPhotosAC = (photos: InitialStateProfilePhotosType): SetPhotosACType => ({ type: SET_PHOTOS, photos })
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 type SetCaptchaACType = {
    type: typeof SET_CAPTCHA,
    captcha: string
 }
-const setCaptchaAC = (captcha: string): SetCaptchaACType => ({ type: SET_CAPTCHA, captcha })
 
+const setCaptchaAC = (captcha: string): SetCaptchaACType => ({ type: SET_CAPTCHA, captcha })
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsTypes>
 
 export const authTC = (): ThunkType => async (dispatch) => {
    const response = await getAuth()
-   if (response.resultCode === 0) {
+   if (response.resultCode === ResultCode.Success) {
       let email = response.data.email
       let id = response.data.id
       let login = response.data.login
@@ -167,7 +174,7 @@ export const authTC = (): ThunkType => async (dispatch) => {
 export const logOutTC = (): ThunkType => async (dispatch) => {
    dispatch(setIsLoadingAC(true))
    const response = await logOut()
-   if (response.resultCode === 0) {
+   if (response.resultCode === ResultCode.Success) {
       dispatch(setUserDataAC(null, null, null, false))
       dispatch(setIsLoadingAC(false))
    }
@@ -175,10 +182,10 @@ export const logOutTC = (): ThunkType => async (dispatch) => {
 
 export const LogInTC = (email: string, password: string, rememberMe: boolean, captcha: string): ThunkType => async (dispatch) => {
    let response = await logIn(email, password, rememberMe, captcha)
-   if (response.resultCode === 0) {
+   if (response.resultCode === ResultCode.Success) {
       dispatch(authTC())
    } else {
-      if (response.resultCode === 10) {
+      if (response.resultCode === ResultCode.CaptchaIsRequired) {
          dispatch(getCaptchaTC())
       }
    }
@@ -193,7 +200,7 @@ export const getCaptchaTC = (): ThunkType => async (dispatch) => {
 export const savePhotoTC = (photo: File): ThunkType => async (dispatch) => {
    dispatch(setIsLoadingAC(true))
    let response = await savePhoto(photo)
-   if (response.resultCode === 0) {
+   if (response.resultCode === ResultCode.Success) {
       dispatch(setIsLoadingAC(false))
       dispatch(setPhotosAC(response.data.photos))
       dispatch(setProfilePhotosAC(response.data.photos))

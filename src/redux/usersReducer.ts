@@ -1,5 +1,5 @@
 import { ThunkAction } from 'redux-thunk';
-import { unfollowUser, getUsers, followUser } from '../API/api';
+import { unfollowUser, getUsers, followUser, ResultCode } from '../API/api';
 import { InitialStateProfilePhotosType } from './authReducer';
 import { AppStateType } from './redux';
 
@@ -78,52 +78,59 @@ const usersReducer = (state = initialState, action: ActionsTypes): InitialStateT
          return state
    }
 }
-
+/////////////////////////////////////////////////////////////////////
 type FollowUnfollowUsersACType = {
    type: typeof FOLLOW_UNFOLLOW,
    userID: number,
    isSwitch: boolean
 }
-export const followUnfollowUsers = (userID: number, isSwitch: boolean): FollowUnfollowUsersACType => ({ type: FOLLOW_UNFOLLOW, userID, isSwitch })
 
+export const followUnfollowUsers = (userID: number, isSwitch: boolean): FollowUnfollowUsersACType => ({ type: FOLLOW_UNFOLLOW, userID, isSwitch })
+//////////////////////////////////////////////////////////////////////////////////////////
 type SetUsersACType = {
    type: typeof SET_USERS,
    users: UserType[]
 }
-export const setUsers = (users: UserType[]): SetUsersACType => ({ type: SET_USERS, users })
 
+export const setUsers = (users: UserType[]): SetUsersACType => ({ type: SET_USERS, users })
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 type SetCurrentPageACType = {
    type: typeof SET_CURRENT_PAGE,
    page: number
 }
-export const setCurrentPage = (page: number): SetCurrentPageACType => ({ type: SET_CURRENT_PAGE, page: page })
 
+export const setCurrentPage = (page: number): SetCurrentPageACType => ({ type: SET_CURRENT_PAGE, page: page })
+////////////////////////////////////////////////////////////////////////////////////////////
 type SetAllUsersACType = {
    type: typeof SET_ALL_USERS,
    users: number
 }
-export const setAllUsers = (users: number): SetAllUsersACType => ({ type: SET_ALL_USERS, users })
 
+export const setAllUsers = (users: number): SetAllUsersACType => ({ type: SET_ALL_USERS, users })
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 type SetIsFetchingACType = {
    type: typeof TOGGLE_IS_FETCHING,
    isFetching: boolean
 }
-export const setIsFetching = (isFetching: boolean): SetIsFetchingACType => ({ type: TOGGLE_IS_FETCHING, isFetching })
 
+export const setIsFetching = (isFetching: boolean): SetIsFetchingACType => ({ type: TOGGLE_IS_FETCHING, isFetching })
+////////////////////////////////////////////////////////////////////////////////////////////
 type ToggleFollowingProgressACType = {
    type: typeof TOGGLE_IS_FOLLOWING_PROGRESS,
    isFetching: boolean,
    userID: number
 }
+
 export const toggleFollowingProgress = (isFetching: boolean, userID: number): ToggleFollowingProgressACType =>
    ({ type: TOGGLE_IS_FOLLOWING_PROGRESS, isFetching, userID })
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 type SetPortionNumberACType = {
    type: typeof SET_PORTION_NUMBER,
    portionNumber: number
 }
-export const setPortionNumber = (portionNumber: number): SetPortionNumberACType => ({ type: SET_PORTION_NUMBER, portionNumber })
 
+export const setPortionNumber = (portionNumber: number): SetPortionNumberACType => ({ type: SET_PORTION_NUMBER, portionNumber })
+///////////////////////////////////////////////////////////////////////////////
 
 type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsTypes>
 
@@ -144,7 +151,7 @@ export const followUnfollowUserTC = (userID: number, follow: boolean): ThunkType
    dispatch(toggleFollowingProgress(true, userID))
    const apiCall = follow ? followUser : unfollowUser;
    const response = await apiCall(userID)
-   if (response.resultCode === 0) {
+   if (response.resultCode === ResultCode.Success) {
       follow ? dispatch(followUnfollowUsers(userID, true)) : dispatch(followUnfollowUsers(userID, false))
    }
    dispatch(toggleFollowingProgress(false, userID))
