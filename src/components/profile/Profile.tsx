@@ -4,15 +4,15 @@ import ava from './../../img/ava.jpg'
 import ProfileStatus from './profileStatus/ProfileStatus'
 import { ChangeEvent, useState } from 'react'
 import ProfileDataForm from './profileDataForm/ProfileDataForm'
-import { InitialStateProfileType } from '../../redux/authReducer'
+import { ProfileType } from '../../redux/authReducer'
 
 
 type PropsType = {
-   profile: InitialStateProfileType 
+   profile: ProfileType 
    authorizedUserID: number | null 
    userID: number 
    savePhotoTC: (photos: File) => void
-   saveProfileTC: (values: InitialStateProfileType, userID: number) => void
+   saveProfileTC: (values: ProfileType, userID: number) => void
    isLoading: boolean 
    contactsErrors: string[]
    status: string 
@@ -56,7 +56,7 @@ const Profile: React.FC<PropsType> = ({ profile, authorizedUserID, userID, saveP
 }
 
 type ProfileDataType = {
-   profile: InitialStateProfileType;
+   profile: ProfileType;
    userID: number;
    authorizedUserID: number | null;
    goToEditMode: () => void;

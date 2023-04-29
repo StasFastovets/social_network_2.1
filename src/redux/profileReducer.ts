@@ -1,78 +1,71 @@
 import { ThunkAction } from "redux-thunk";
 import { getUser, ResultCode, updateStatusOfUser } from "../API/api"
 import { getStatusOfUser, saveProfile } from '../API/api';
-import { InitialStateProfileType } from "./authReducer";
-import { InitialStateProfilePhotosType } from "./authReducer";
+import { ProfileType } from "./authReducer";
+import { PhotosType } from "./authReducer";
 import { AppStateType } from "./redux";
+import Nullable from './nullable'
 
 
-const SET_USER = 'profile/SET_USER'
-const SET_STATUS = 'profile/SET_STATUS'
-const IS_LOADING = 'profile/IS_LOADING'
-const SET_PHOTOS = 'profile/SET_PHOTOS'
-const SET_ERROR = 'profile/SET_ERROR'
-const NULL_ERROR = 'profile/NULL_ERROR'
-
-export type InitialStateType = {
-   profile: InitialStateProfileType,
-   status: string,
-   isLoading: boolean,
-   contactsErrors: string[]
-}
-
-let initialState: InitialStateType = {
+let initialState = {
    profile: {
       photos: {
-         small: null,
-         large: null
+         small: null as Nullable<string>,
+         large: null as Nullable<string>
       },
       contacts: {
-         facebook: null,
-         website: null,
-         vk: null,
-         twitter: null,
-         instagram: null,
-         youtube: null,
-         github: null,
-         mainLink: null
+         facebook: null as Nullable<string>,
+         website: null as Nullable<string>,
+         vk: null as Nullable<string>,
+         twitter: null as Nullable<string>,
+         instagram: null as Nullable<string>,
+         youtube: null as Nullable<string>,
+         github: null as Nullable<string>,
+         mainLink: null as Nullable<string>,
       },
-      userId: null,
+      userId: null as Nullable<number>,
       lookingForAJob: false,
-      lookingForAJobDescription: null,
-      fullName: null,
-      aboutMe: null,
+      lookingForAJobDescription: null as Nullable<string>,
+      fullName: null as Nullable<string>,
+      aboutMe: null as Nullable<string>,
    },
    status: '',
    isLoading: false,
-   contactsErrors: []
+   contactsErrors: [] as Array<string>
 }
 
-type ActionsTypes = SetUserProfileACType | SetStatusOfUserACType | IsLoadingACType | SetProfilePhotosACType | SetErrorACType |
-   SetNullErrorACType
+type StateType = typeof initialState
 
-const profileReducer = (state = initialState, action: ActionsTypes): InitialStateType => {
+type ActionsTypes = ReturnType<typeof setUserProfileAC> |
+   ReturnType<typeof setStatusOfUserAC> |
+   ReturnType<typeof setIsLoadingAC> |
+   ReturnType<typeof setProfilePhotosAC> |
+   ReturnType<typeof setErrorAC> |
+   ReturnType<typeof setNullErrorAC>
+
+const profileReducer = (state: StateType = initialState, action: ActionsTypes): StateType => {
    switch (action.type) {
-      case SET_USER:
+      case 'profile/SET_USER':
          return {
             ...state,
             profile: action.profile
          }
-      case SET_STATUS:
+      case 'profile/SET_STATUS':
          return {
             ...state,
             status: action.status
          }
-      case IS_LOADING:
+      case 'profile/IS_LOADING':
          return {
             ...state,
             isLoading: action.isLoading
          }
-      case SET_PHOTOS:
+      case 'profile/SET_PHOTOS':
          return {
             ...state,
             profile: { ...state.profile, photos: action.photos }
          }
-      case SET_ERROR:
+      case 'profile/SET_ERROR':
          const errorMessages: string[] = action.error;
          const fieldNames = errorMessages.reduce<string[]>((acc, errorMessage) => {
             const match = errorMessage.match(/\(([^)]+)\)/);
@@ -88,7 +81,7 @@ const profileReducer = (state = initialState, action: ActionsTypes): InitialStat
             ...state,
             contactsErrors: fieldNames
          }
-      case NULL_ERROR:
+      case 'profile/NULL_ERROR':
          return {
             ...state,
             contactsErrors: []
@@ -99,46 +92,12 @@ const profileReducer = (state = initialState, action: ActionsTypes): InitialStat
 }
 
 ///////////////////////////////////////////////////////////////////
-type SetUserProfileACType = {
-   type: typeof SET_USER,
-   profile: InitialStateProfileType 
-}
-
-export const setUserProfileAC = (profile: InitialStateProfileType): SetUserProfileACType => ({ type: SET_USER, profile })
-////////////////////////////////////////////////////////////////////////////////////
-type SetStatusOfUserACType = {
-   type: typeof SET_STATUS,
-   status: string 
-}
-
-export const setStatusOfUserAC = (status: string): SetStatusOfUserACType => ({ type: SET_STATUS, status })
-///////////////////////////////////////////////////////////////////////////////////
-type IsLoadingACType = {
-   type: typeof IS_LOADING,
-   isLoading: boolean
-}
-
-export const setIsLoadingAC = (isLoading: boolean): IsLoadingACType => ({ type: IS_LOADING, isLoading })
-/////////////////////////////////////////////////////////////////////////////////////
-export type SetProfilePhotosACType = {
-   type: typeof SET_PHOTOS,
-   photos: InitialStateProfilePhotosType
-}
-
-export const setProfilePhotosAC = (photos: InitialStateProfilePhotosType): SetProfilePhotosACType => ({ type: SET_PHOTOS, photos })
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-type SetErrorACType = {
-   type: typeof SET_ERROR,
-   error: string[]
-}
-
-export const setErrorAC = (error: string[]): SetErrorACType => ({ type: SET_ERROR, error })
-///////////////////////////////////////////////////////////////////////////////////
-type SetNullErrorACType = {
-   type: typeof NULL_ERROR,
-}
-
-export const setNullErrorAC = (): SetNullErrorACType => ({ type: NULL_ERROR })
+export const setUserProfileAC = (profile: ProfileType) => ({ type: 'profile/SET_USER', profile } as const)
+export const setStatusOfUserAC = (status: string) => ({ type: 'profile/SET_STATUS', status } as const)
+export const setIsLoadingAC = (isLoading: boolean) => ({ type: 'profile/IS_LOADING', isLoading } as const)
+export const setProfilePhotosAC = (photos: PhotosType) => ({ type: 'profile/SET_PHOTOS', photos } as const)
+export const setErrorAC = (error: string[]) => ({ type: 'profile/SET_ERROR', error } as const)
+export const setNullErrorAC = () => ({ type: 'profile/NULL_ERROR' } as const)
 //////////////////////////////////////////////////////////////////////////////////
 
 type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsTypes>
@@ -162,7 +121,7 @@ export const updataStatusOfUserTC = (status: string): ThunkType => async (dispat
    }
 }
 
-export const saveProfileTC = (profile: InitialStateProfileType, userID: number): ThunkType => async (dispatch) => {
+export const saveProfileTC = (profile: ProfileType, userID: number): ThunkType => async (dispatch) => {
    dispatch(setIsLoadingAC(true))
    dispatch(setNullErrorAC())
    let response = await saveProfile(profile)

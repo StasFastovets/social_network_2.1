@@ -1,53 +1,42 @@
 import { ThunkAction } from 'redux-thunk';
 import { unfollowUser, getUsers, followUser, ResultCode } from '../API/api';
-import { InitialStateProfilePhotosType } from './authReducer';
+import { PhotosType } from './authReducer';
 import { AppStateType } from './redux';
 
-const FOLLOW_UNFOLLOW = 'users/FOLLOW_UNFOLLOW'
-const SET_USERS = 'users/SET_USER'
-const SET_CURRENT_PAGE = 'users/SET_CURRENT_PAGE'
-const SET_ALL_USERS = 'users/SET_ALL_USERS'
-const TOGGLE_IS_FETCHING = 'users/TOGGLE_IS_FETCHING'
-const TOGGLE_IS_FOLLOWING_PROGRESS = 'users/TOGGLE_IS_FOLLOWING_PROGRESS'
-const SET_PORTION_NUMBER = 'users/SET_PORTION_NUMBER'
 
 export type UserType = {
    id: number,
    name: string,
    status: string | null,
    followed: boolean,
-   photos: InitialStateProfilePhotosType
+   photos: PhotosType
 }
 
-export type InitialStateType = {
-   users: UserType[],
-   pageSize: number,
-   totalUsersCount: number,
-   currentPage: number,
-   isFetching: boolean,
-   followingInProgress: number[],
-   portionSize: number,
-   portionNumber: number,
-}
-
-let initialState: InitialStateType = {
-   users: [],
-   pageSize: 100,                 // количество пользователей на странице
-   totalUsersCount: 0,            // количество всех пользователей, приходят из сервера 
-   currentPage: 1,                // текущая страница
-   isFetching: false,             // отображение полосы загрузки
-   followingInProgress: [],       // 
-   portionSize: 10,               // количество порций(страничек)
+let initialState = {
+   users: [] as Array<UserType>,
+   pageSize: 100,                                  // количество пользователей на странице
+   totalUsersCount: 0,                             // количество всех пользователей, приходят из сервера 
+   currentPage: 1,                                 // текущая страница
+   isFetching: false,                              // отображение полосы загрузки
+   followingInProgress: [] as Array<number>,       // 
+   portionSize: 10,                                // количество порций(страничек)
    portionNumber: 1
 }
 
-type ActionsTypes = FollowUnfollowUsersACType | SetUsersACType | SetCurrentPageACType | SetAllUsersACType | SetIsFetchingACType |
-   ToggleFollowingProgressACType | SetPortionNumberACType
+type StateType = typeof initialState
 
-const usersReducer = (state = initialState, action: ActionsTypes): InitialStateType => {
+type ActionsTypes = ReturnType<typeof followUnfollowUsers> |
+   ReturnType<typeof setUsers> |
+   ReturnType<typeof setCurrentPage> |
+   ReturnType<typeof setAllUsers> |
+   ReturnType<typeof setIsFetching> |
+   ReturnType<typeof toggleFollowingProgress> |
+   ReturnType<typeof setPortionNumber>
+
+const usersReducer = (state: StateType = initialState, action: ActionsTypes): StateType => {
 
    switch (action.type) {
-      case FOLLOW_UNFOLLOW:
+      case 'users/FOLLOW_UNFOLLOW':
          return {
             ...state,
             users: state.users.map(item => {
@@ -57,79 +46,36 @@ const usersReducer = (state = initialState, action: ActionsTypes): InitialStateT
                return item
             })
          }
-      case SET_USERS:
+      case 'users/SET_USER':
          return { ...state, users: [...action.users] }
-      case SET_CURRENT_PAGE:
+      case 'users/SET_CURRENT_PAGE':
          return { ...state, currentPage: action.page }
-      case SET_ALL_USERS:
-         return { ...state, totalUsersCount: action.users }
-      case TOGGLE_IS_FETCHING:
+      case 'users/SET_ALL_USERS':
+         return { ...state, totalUsersCount: action.usersCount }
+      case 'users/TOGGLE_IS_FETCHING':
          return { ...state, isFetching: action.isFetching }
-      case TOGGLE_IS_FOLLOWING_PROGRESS:
+      case 'users/TOGGLE_IS_FOLLOWING_PROGRESS':
          return {
             ...state,
             followingInProgress: action.isFetching ?
                [...state.followingInProgress, action.userID] :
                state.followingInProgress.filter(id => id != action.userID)
          }
-      case SET_PORTION_NUMBER:
+      case 'users/SET_PORTION_NUMBER':
          return { ...state, portionNumber: action.portionNumber }
       default:
          return state
    }
 }
 /////////////////////////////////////////////////////////////////////
-type FollowUnfollowUsersACType = {
-   type: typeof FOLLOW_UNFOLLOW,
-   userID: number,
-   isSwitch: boolean
-}
-
-export const followUnfollowUsers = (userID: number, isSwitch: boolean): FollowUnfollowUsersACType => ({ type: FOLLOW_UNFOLLOW, userID, isSwitch })
-//////////////////////////////////////////////////////////////////////////////////////////
-type SetUsersACType = {
-   type: typeof SET_USERS,
-   users: UserType[]
-}
-
-export const setUsers = (users: UserType[]): SetUsersACType => ({ type: SET_USERS, users })
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-type SetCurrentPageACType = {
-   type: typeof SET_CURRENT_PAGE,
-   page: number
-}
-
-export const setCurrentPage = (page: number): SetCurrentPageACType => ({ type: SET_CURRENT_PAGE, page: page })
-////////////////////////////////////////////////////////////////////////////////////////////
-type SetAllUsersACType = {
-   type: typeof SET_ALL_USERS,
-   users: number
-}
-
-export const setAllUsers = (users: number): SetAllUsersACType => ({ type: SET_ALL_USERS, users })
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-type SetIsFetchingACType = {
-   type: typeof TOGGLE_IS_FETCHING,
-   isFetching: boolean
-}
-
-export const setIsFetching = (isFetching: boolean): SetIsFetchingACType => ({ type: TOGGLE_IS_FETCHING, isFetching })
-////////////////////////////////////////////////////////////////////////////////////////////
-type ToggleFollowingProgressACType = {
-   type: typeof TOGGLE_IS_FOLLOWING_PROGRESS,
-   isFetching: boolean,
-   userID: number
-}
-
-export const toggleFollowingProgress = (isFetching: boolean, userID: number): ToggleFollowingProgressACType =>
-   ({ type: TOGGLE_IS_FOLLOWING_PROGRESS, isFetching, userID })
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-type SetPortionNumberACType = {
-   type: typeof SET_PORTION_NUMBER,
-   portionNumber: number
-}
-
-export const setPortionNumber = (portionNumber: number): SetPortionNumberACType => ({ type: SET_PORTION_NUMBER, portionNumber })
+export const followUnfollowUsers = (userID: number, isSwitch: boolean) => ({ type: 'users/FOLLOW_UNFOLLOW', userID, isSwitch } as const)
+export const setUsers = (users: UserType[]) => ({ type: 'users/SET_USER', users } as const)
+export const setCurrentPage = (page: number) => ({ type: 'users/SET_CURRENT_PAGE', page: page } as const)
+export const setAllUsers = (usersCount: number) => ({ type: 'users/SET_ALL_USERS', usersCount } as const)
+export const setIsFetching = (isFetching: boolean) => ({ type: 'users/TOGGLE_IS_FETCHING', isFetching } as const)
+export const toggleFollowingProgress = (isFetching: boolean, userID: number) =>
+   ({ type: 'users/TOGGLE_IS_FOLLOWING_PROGRESS', isFetching, userID } as const)
+export const setPortionNumber = (portionNumber: number) => ({ type: 'users/SET_PORTION_NUMBER', portionNumber } as const)
 ///////////////////////////////////////////////////////////////////////////////
 
 type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsTypes>

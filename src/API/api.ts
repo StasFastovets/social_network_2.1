@@ -1,5 +1,5 @@
 import axios from "axios";
-import { InitialStateProfileContactsType, InitialStateProfilePhotosType, InitialStateProfileType } from "../redux/authReducer";
+import { ContactsType, PhotosType, ProfileType } from "../redux/authReducer";
 
 
 const instance = axios.create({
@@ -25,14 +25,9 @@ export const getAuth = async () => {
    return response.data;
 }
 ///////////////////////////////////////////////////////////////////////
-type PhotosType = {
-   small: string | null
-   large: string | null
-}
-
 type GetUserType = {
-   photos: InitialStateProfilePhotosType
-   contacts: InitialStateProfileContactsType
+   photos: PhotosType
+   contacts: ContactsType
    fullName: string
    userId: number
    lookingForAJob: boolean
@@ -119,7 +114,7 @@ export const savePhoto = async (photo: File) => {
    return response.data;
 }
 /////////////////////////////////////////////////////////////////////////////////////////
-export const saveProfile = async (profile: InitialStateProfileType) => {
+export const saveProfile = async (profile: ProfileType) => {
    let response = await instance.put<ApiType>(`profile`, profile)
    return response.data
 }

@@ -9,13 +9,13 @@ import { updataStatusOfUserTC } from '../../redux/profileReducer';
 import { getStatusOfUserTC, saveProfileTC } from '../../redux/profileReducer';
 import { getAuthorizedUserID, getIsAuth, getIsLoading, getProfile, getStatus } from '../../redux/profile_selectors ';
 import { savePhotoTC } from '../../redux/authReducer';
-import { InitialStateProfileType } from "../../redux/authReducer";
+import { ProfileType } from "../../redux/authReducer";
 import { AppStateType } from '../../redux/redux';
 
 type MapStatePropsType = {
    isAuth: boolean
    authorizedUserID: number | null
-   profile: InitialStateProfileType
+   profile: ProfileType
    status: string 
    isLoading: boolean
    contactsErrors: string[]
@@ -26,7 +26,7 @@ type MapDispatchPropsType = {
    updataStatusOfUserTC: (status: string) => void
    getStatusOfUserTC: (userID: number) => void
    savePhotoTC: (photos: File) => void
-   saveProfileTC: (values: InitialStateProfileType, userID: number) => void
+   saveProfileTC: (values: ProfileType, userID: number) => void
 }
 
 type OwnPropsType = {}

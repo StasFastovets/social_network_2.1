@@ -2,107 +2,99 @@ import { ThunkAction } from 'redux-thunk';
 import { getAuth, getCaptchaUrl, ResultCode } from '../API/api';
 import { logOut } from '../API/api';
 import { logIn, getUser, savePhoto } from '../API/api';
-import { setProfilePhotosAC, SetProfilePhotosACType } from './profileReducer';
+import { setProfilePhotosAC } from './profileReducer';
 import { AppStateType } from './redux';
+import Nullable from './nullable'
 
 
-const SET_USER_DATA = 'auth/SET_USER_DATA'
-const IS_LOADING = 'auth/IS_LOADING'
-const SET_USER = 'auth/SET_USER'
-const SET_PHOTOS = 'auth/SET_PHOTOS'
-const SET_CAPTCHA = 'auth/SET_CAPTCHA'
-
-export type InitialStateProfilePhotosType = {
-   small: string | null,
-   large: string | null,
+export type PhotosType = {
+   small: Nullable<string>,
+   large: Nullable<string>,
 }
 
-export type InitialStateProfileContactsType = {
-   github: string | null,
-   vk: string | null,
-   facebook: string | null,
-   instagram: string | null,
-   twitter: string | null,
-   website: string | null,
-   youtube: string | null,
-   mainLink: string | null,
+export type ContactsType = {
+   github: Nullable<string>,
+   vk: Nullable<string>,
+   facebook: Nullable<string>,
+   instagram: Nullable<string>,
+   twitter: Nullable<string>,
+   website: Nullable<string>,
+   youtube: Nullable<string>,
+   mainLink: Nullable<string>,
 }
 
-export type InitialStateProfileType = {
-   userId: number | null,
+export type ProfileType = {
+   userId: Nullable<number>,
    lookingForAJob: boolean,
-   lookingForAJobDescription: string | null,
-   fullName: string | null,
-   photos: InitialStateProfilePhotosType,
-   contacts: InitialStateProfileContactsType
-   aboutMe: string | null
+   lookingForAJobDescription: Nullable<string>,
+   fullName: Nullable<string>,
+   photos: PhotosType,
+   contacts: ContactsType
+   aboutMe: Nullable<string>
 }
 
-export type InitialStateType = {
-   id: number | null,
-   email: string | null,
-   login: string | null,
-   isAuth: boolean,
-   isLoading: boolean,
-   captcha: string | null,
-   profile: InitialStateProfileType,
-}
-
-let initialState: InitialStateType = {
-   id: null,
-   email: null,
-   login: null,
+let initialState = {
+   id: null as Nullable<number>,
+   email: null as Nullable<string>,
+   login: null as Nullable<string>,
    isAuth: false,
    isLoading: false,
-   captcha: null,
+   captcha: null as Nullable<string>,
    profile: {
-      userId: null,
+      userId: null as Nullable<number>,
       lookingForAJob: false,
-      lookingForAJobDescription: null,
-      fullName: null,
-      aboutMe: null,
+      lookingForAJobDescription: null as Nullable<string>,
+      fullName: null as Nullable<string>,
+      aboutMe: null as Nullable<string>,
       contacts: {
-         github: null,
-         vk: null,
-         facebook: null,
-         instagram: null,
-         twitter: null,
-         website: null,
-         youtube: null,
-         mainLink: null
+         github: null as Nullable<string>,
+         vk: null as Nullable<string>,
+         facebook: null as Nullable<string>,
+         instagram: null as Nullable<string>,
+         twitter: null as Nullable<string>,
+         website: null as Nullable<string>,
+         youtube: null as Nullable<string>,
+         mainLink: null as Nullable<string>,
       },
       photos: {
-         small: null,
-         large: null,
+         small: null as Nullable<string>,
+         large: null as Nullable<string>,
       }
    }
 }
 
-type ActionsTypes = SetUserDataACType | SetIsLoadingACType | SetUserACType | SetPhotosACType | SetCaptchaACType | SetProfilePhotosACType
+type StateType = typeof initialState
 
-const authReducer = (state = initialState, action: ActionsTypes): InitialStateType => {
+type ActionsTypes = ReturnType<typeof setUserDataAC> |
+   ReturnType<typeof setIsLoadingAC> |
+   ReturnType<typeof setUserAC> |
+   ReturnType<typeof setPhotosAC> |
+   ReturnType<typeof setCaptchaAC> |
+   ReturnType<typeof setProfilePhotosAC>
+
+const authReducer = (state: StateType = initialState, action: ActionsTypes): StateType => {
    switch (action.type) {
-      case SET_USER_DATA:
+      case 'auth/SET_USER_DATA':
          return {
             ...state,
             ...action.payload
          }
-      case IS_LOADING:
+      case 'auth/IS_LOADING':
          return {
             ...state,
             isLoading: action.isLoading
          }
-      case SET_USER:
+      case 'auth/SET_USER':
          return {
             ...state,
             profile: action.profile
          }
-      case SET_PHOTOS:
+      case 'auth/SET_PHOTOS':
          return {
             ...state,
             profile: { ...state.profile, photos: action.photos }
          }
-      case SET_CAPTCHA:
+      case 'auth/SET_CAPTCHA':
          return {
             ...state,
             captcha: action.captcha
@@ -113,48 +105,16 @@ const authReducer = (state = initialState, action: ActionsTypes): InitialStateTy
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-type SetUserDataPayloadACType = {
-   id: number | null,
-   email: string | null,
-   login: string | null,
-   isAuth: boolean
-}
+const setUserDataAC = (id: Nullable<number>, email: Nullable<string>, login: Nullable<string>, isAuth: boolean) =>
+   ({ type: 'auth/SET_USER_DATA', payload: { id, email, login, isAuth } } as const)
 
-type SetUserDataACType = {
-   type: typeof SET_USER_DATA,
-   payload: SetUserDataPayloadACType
-}
+const setIsLoadingAC = (isLoading: boolean) => ({ type: 'auth/IS_LOADING', isLoading } as const)
 
-const setUserDataAC = (id: number | null, email: string | null, login: string | null, isAuth: boolean): SetUserDataACType =>
-   ({ type: SET_USER_DATA, payload: { id, email, login, isAuth } })
-////////////////////////////////////////////////////////////////////////////////////////////////
-type SetIsLoadingACType = {
-   type: typeof IS_LOADING,
-   isLoading: boolean
-}
+const setUserAC = (profile: ProfileType) => ({ type: 'auth/SET_USER', profile } as const)
 
-const setIsLoadingAC = (isLoading: boolean): SetIsLoadingACType => ({ type: IS_LOADING, isLoading })
-////////////////////////////////////////////////////////////////////////////////////////////////////
-type SetUserACType = {
-   type: typeof SET_USER,
-   profile: InitialStateProfileType
-}
+const setPhotosAC = (photos: PhotosType) => ({ type: 'auth/SET_PHOTOS', photos } as const)
 
-const setUserAC = (profile: InitialStateProfileType): SetUserACType => ({ type: SET_USER, profile })
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-type SetPhotosACType = {
-   type: typeof SET_PHOTOS,
-   photos: InitialStateProfilePhotosType
-}
-
-const setPhotosAC = (photos: InitialStateProfilePhotosType): SetPhotosACType => ({ type: SET_PHOTOS, photos })
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-type SetCaptchaACType = {
-   type: typeof SET_CAPTCHA,
-   captcha: string
-}
-
-const setCaptchaAC = (captcha: string): SetCaptchaACType => ({ type: SET_CAPTCHA, captcha })
+const setCaptchaAC = (captcha: string) => ({ type: 'auth/SET_CAPTCHA', captcha } as const)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsTypes>
