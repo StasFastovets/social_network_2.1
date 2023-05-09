@@ -32,7 +32,8 @@ const Profile: React.FC<PropsType> = ({ profile, authorizedUserID, userID, saveP
    }
 
    const onProfilePhotoSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files && e.target.files.length) {
+      // if (e.target.files && e.target.files.length) {
+         if (e.target.files?.length) {
          savePhotoTC(e.target.files[0])
       }
    }

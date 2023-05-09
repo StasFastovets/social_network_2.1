@@ -1,6 +1,6 @@
-import { applyMiddleware, combineReducers, legacy_createStore } from "redux";
+import { Action, applyMiddleware, combineReducers, legacy_createStore } from "redux";
 import authReducer from "./authReducer";
-import thunkMiddleware from "redux-thunk";
+import thunkMiddleware, { ThunkAction } from "redux-thunk";
 import profileReducer from "./profileReducer";
 import appReducer from "./appReducer";
 import usersReducer from "./usersReducer";
@@ -21,6 +21,12 @@ export type AppStateType = ReturnType<ReducersType>     // служит для �
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = legacy_createStore(reducers, composeEnhancers(applyMiddleware(thunkMiddleware)));
 
+export type PropertiesTypes<T> = T extends { [key: string]: infer U } ? U : never
 
+//export type BaseThunkType< A extends Action, R = Promise<void> > = ThunkAction<R, AppStateType, unknown, A> 
+export type BaseThunkType< BasicAction extends Action, ReturnType = Promise<void> > = ThunkAction<ReturnType, AppStateType, unknown, BasicAction> 
 
 export default store
+
+
+//export type InferActionsTypes<T> = T extends {[key: string]: (...args: any[]) => infer U} ? U : never; - можно так

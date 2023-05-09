@@ -3,8 +3,9 @@ import { getUser, ResultCode, updateStatusOfUser } from "../API/api"
 import { getStatusOfUser, saveProfile } from '../API/api';
 import { ProfileType } from "./authReducer";
 import { PhotosType } from "./authReducer";
-import { AppStateType } from "./redux";
+import { AppStateType, BaseThunkType } from "./redux";
 import Nullable from './nullable'
+import { PropertiesTypes } from "./redux";
 
 
 let initialState = {
@@ -36,14 +37,18 @@ let initialState = {
 
 type StateType = typeof initialState
 
-type ActionsTypes = ReturnType<typeof setUserProfileAC> |
-   ReturnType<typeof setStatusOfUserAC> |
-   ReturnType<typeof setIsLoadingAC> |
-   ReturnType<typeof setProfilePhotosAC> |
-   ReturnType<typeof setErrorAC> |
-   ReturnType<typeof setNullErrorAC>
+export const actionsProfile = {
+   setUserProfileAC: (profile: ProfileType) => ({ type: 'profile/SET_USER', profile } as const),
+   setStatusOfUserAC: (status: string) => ({ type: 'profile/SET_STATUS', status } as const),
+   setIsLoadingAC: (isLoading: boolean) => ({ type: 'profile/IS_LOADING', isLoading } as const),
+   setProfilePhotosAC: (photos: PhotosType) => ({ type: 'profile/SET_PHOTOS', photos } as const),
+   setErrorAC: (error: string[]) => ({ type: 'profile/SET_ERROR', error } as const),
+   setNullErrorAC: () => ({ type: 'profile/NULL_ERROR' } as const),
+}
 
-const profileReducer = (state: StateType = initialState, action: ActionsTypes): StateType => {
+type ActionsType = ReturnType<PropertiesTypes<typeof actionsProfile>>
+
+const profileReducer = (state: StateType = initialState, action: ActionsType): StateType => {
    switch (action.type) {
       case 'profile/SET_USER':
          return {
@@ -91,46 +96,38 @@ const profileReducer = (state: StateType = initialState, action: ActionsTypes): 
    }
 }
 
-///////////////////////////////////////////////////////////////////
-export const setUserProfileAC = (profile: ProfileType) => ({ type: 'profile/SET_USER', profile } as const)
-export const setStatusOfUserAC = (status: string) => ({ type: 'profile/SET_STATUS', status } as const)
-export const setIsLoadingAC = (isLoading: boolean) => ({ type: 'profile/IS_LOADING', isLoading } as const)
-export const setProfilePhotosAC = (photos: PhotosType) => ({ type: 'profile/SET_PHOTOS', photos } as const)
-export const setErrorAC = (error: string[]) => ({ type: 'profile/SET_ERROR', error } as const)
-export const setNullErrorAC = () => ({ type: 'profile/NULL_ERROR' } as const)
-//////////////////////////////////////////////////////////////////////////////////
 
-type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsTypes>
+type ThunkType = BaseThunkType<ActionsType> 
 
 export const getUserProfileTC = (userID: number): ThunkType => async (dispatch) => {
    let response = await getUser(userID)
-   dispatch(setUserProfileAC(response))
+   dispatch(actionsProfile.setUserProfileAC(response))
 }
 
 export const getStatusOfUserTC = (id: number): ThunkType => async (dispatch) => {
    const response = await getStatusOfUser(id)
-   dispatch(setStatusOfUserAC(response))
+   dispatch(actionsProfile.setStatusOfUserAC(response))
 }
 
 export const updataStatusOfUserTC = (status: string): ThunkType => async (dispatch) => {
-   dispatch(setIsLoadingAC(true))
+   dispatch(actionsProfile.setIsLoadingAC(true))
    const response = await updateStatusOfUser(status)
    if (response.resultCode === ResultCode.Success) {
-      dispatch(setStatusOfUserAC(status))
-      dispatch(setIsLoadingAC(false))
+      dispatch(actionsProfile.setStatusOfUserAC(status))
+      dispatch(actionsProfile.setIsLoadingAC(false))
    }
 }
 
 export const saveProfileTC = (profile: ProfileType, userID: number): ThunkType => async (dispatch) => {
-   dispatch(setIsLoadingAC(true))
-   dispatch(setNullErrorAC())
+   dispatch(actionsProfile.setIsLoadingAC(true))
+   dispatch(actionsProfile.setNullErrorAC())
    let response = await saveProfile(profile)
    if (response.resultCode == ResultCode.Success) {
       dispatch(getUserProfileTC(userID))
-      dispatch(setIsLoadingAC(false))
+      dispatch(actionsProfile.setIsLoadingAC(false))
    } else {
-      dispatch(setErrorAC(response.messages))
-      dispatch(setIsLoadingAC(false))
+      dispatch(actionsProfile.setErrorAC(response.messages))
+      dispatch(actionsProfile.setIsLoadingAC(false))
       return Promise.reject()
    }
 }

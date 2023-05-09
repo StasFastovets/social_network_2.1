@@ -14,7 +14,6 @@ type MapDispatchPropsType = {
    LogInTC: (email: string, password: string, remember: boolean, captcha: string) => void
 }
 
-type OwnPropsType = {}
 
 let mapStateToProps = (state: AppStateType): MapStatePropsType => {
    return {
@@ -24,6 +23,6 @@ let mapStateToProps = (state: AppStateType): MapStatePropsType => {
 }
 
 
-const LoginContainer = connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(mapStateToProps, { LogInTC })(Login)
+const LoginContainer = connect<MapStatePropsType, MapDispatchPropsType, {}, AppStateType>(mapStateToProps, { LogInTC })(Login)
 
 export default LoginContainer

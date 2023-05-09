@@ -27,15 +27,14 @@ const MusicContainer = React.lazy(() => import('./components/music/MusicContaine
 type MapStatePropsType = {
   initialized: boolean
 }
-
 type MapDispatchPropsType = {
   InitializedAppTC: () => void
 }
-
 type OwnPropsType = {
 }
 
 type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType
+
 
 const App: React.FC<PropsType> = (props) => {
 

@@ -25,7 +25,6 @@ type MapDispatchPropsType = {
    logOutTC: () => void
 }
 
-type OwnPropsType = {} 
 
 let mapStateToProps = (state: AppStateType): MapStatePropsType => {
    return {
@@ -40,6 +39,6 @@ let mapStateToProps = (state: AppStateType): MapStatePropsType => {
 
 
 // const HeaderContainer = connect(mapStateToProps, { authTC, logOutTC })(HeaderAPIContainer)
-const HeaderContainer = connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(mapStateToProps, { logOutTC })(Header)
+const HeaderContainer = connect<MapStatePropsType, MapDispatchPropsType, {}, AppStateType>(mapStateToProps, { logOutTC })(Header)
 
 export default HeaderContainer

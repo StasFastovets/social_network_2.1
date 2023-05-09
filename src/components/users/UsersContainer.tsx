@@ -1,37 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setCurrentPage, getUsersTC } from '../../redux/usersReducer';
+import { actionsUsers } from '../../redux/usersReducer';
 import Users from './Users';
 import { getPageSize, getTotalUsersCount, getCurrentPage, getIsFetching, getfollowingInProgress, getCurrentUsers, getPortionSize } from '../../redux/users_selectors';
 import { useEffect } from 'react';
-import { followUnfollowUserTC } from '../../redux/usersReducer';
-import { setPortionNumber } from '../../redux/usersReducer';
+import { followUnfollowUserTC, getUsersTC } from '../../redux/usersReducer';
 import { UserType } from '../../redux/usersReducer';
 import { AppStateType } from '../../redux/redux';
 
-type MapStatePropsType = {
-   users: UserType[]
-   currentPage: number
-   isFetching: boolean
-   totalUsersCount: number
-   portionSize: number
-   pageSize: number
-   portionNumber: number
-   followingInProgress: number[]
-}
+// type MapStatePropsType = {
+//    users: UserType[]
+//    currentPage: number
+//    isFetching: boolean
+//    totalUsersCount: number
+//    portionSize: number
+//    pageSize: number
+//    portionNumber: number
+//    followingInProgress: number[]
+// }
+
+type MapStatePropsType = ReturnType<typeof mapStateToProps>
 
 type MapDispatchPropsType = {
-   followUnfollowUserTC: (id: number, follow: boolean) => void
-   setCurrentPage: (page: number) => void
-   getUsersTC: (currentPage: number, pageSize: number) => void
+   setCurrentPage: (page: number) => void,
    setPortionNumber: (portionNumber: number) => void
+   followUnfollowUserTC: (id: number, follow: boolean) => void,
+   getUsersTC: (currentPage: number, pageSize: number) => void,
 }
 
-type OwnPropsType = {
-}
-
-type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType
-
+type PropsType = MapStatePropsType & MapDispatchPropsType
 
 const UsersAPIContainer: React.FC<PropsType> = ({ getUsersTC, setCurrentPage, setPortionNumber, ...props }) => {
    useEffect(() => {
@@ -49,7 +46,7 @@ const UsersAPIContainer: React.FC<PropsType> = ({ getUsersTC, setCurrentPage, se
    )
 }
 
-let mapStateToProps = (state: AppStateType): MapStatePropsType => {
+let mapStateToProps = (state: AppStateType) => {
    return {
       users: getCurrentUsers(state),
       pageSize: getPageSize(state),
@@ -64,8 +61,8 @@ let mapStateToProps = (state: AppStateType): MapStatePropsType => {
 
 
 // TStateProps = {}, TDispatchProps = {}, TOwnProps = {}, State = DefaultRootState - должна быть именно такая последовательностьтзь
-const UsersContainer = connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(
-   mapStateToProps, { followUnfollowUserTC, setCurrentPage, getUsersTC, setPortionNumber })(UsersAPIContainer)
+const UsersContainer = connect<MapStatePropsType, MapDispatchPropsType, {}, AppStateType>(
+   mapStateToProps, { followUnfollowUserTC, getUsersTC, setCurrentPage: actionsUsers.setCurrentPage, setPortionNumber: actionsUsers.setPortionNumber })(UsersAPIContainer)
 
 export default UsersContainer
 

@@ -12,14 +12,8 @@ import { savePhotoTC } from '../../redux/authReducer';
 import { ProfileType } from "../../redux/authReducer";
 import { AppStateType } from '../../redux/redux';
 
-type MapStatePropsType = {
-   isAuth: boolean
-   authorizedUserID: number | null
-   profile: ProfileType
-   status: string 
-   isLoading: boolean
-   contactsErrors: string[]
-}
+
+type MapStatePropsType = ReturnType<typeof mapStateToProps>
 
 type MapDispatchPropsType = {
    getUserProfileTC: (userID: number) => void
@@ -29,20 +23,13 @@ type MapDispatchPropsType = {
    saveProfileTC: (values: ProfileType, userID: number) => void
 }
 
-type OwnPropsType = {}
 
-type HookPropsType = {
-   getUserProfileTC: (userID: number) => void;
-   getStatusOfUserTC: (userID: number) => void;
-}
-
-type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType & HookPropsType
+type PropsType = MapStatePropsType & MapDispatchPropsType 
 
 
 const ProfileAPIContainer: React.FC<PropsType> = (props) => {
 
    let { userID } = useParams<{ userID?: string }>()
-
    const parsedUserID = userID ? parseInt(userID) : props.authorizedUserID ?? 0;
 
    useEffect(() => {
@@ -55,7 +42,7 @@ const ProfileAPIContainer: React.FC<PropsType> = (props) => {
    )
 }
 
-let mapStateToProps = (state: AppStateType): MapStatePropsType => {
+let mapStateToProps = (state: AppStateType) => {
    return {
       isAuth: getIsAuth(state),
       authorizedUserID: getAuthorizedUserID(state),
@@ -66,10 +53,12 @@ let mapStateToProps = (state: AppStateType): MapStatePropsType => {
    }
 }
 
-// export default compose(connect(mapStateToProps,
+// type OwnPropsType = {}
+
+// export default compose<React.ComponentType>(connect(mapStateToProps,
 //    { getUserProfileTC, updataStatusOfUserTC, getStatusOfUserTC, savePhotoTC }), withAuthRedirect)(ProfileAPIContainer)
 
-const ProfileContainer = connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(
+const ProfileContainer = connect<MapStatePropsType, MapDispatchPropsType, {}, AppStateType>(
    mapStateToProps, { getUserProfileTC, updataStatusOfUserTC, getStatusOfUserTC, savePhotoTC, saveProfileTC })(withAuthRedirect(ProfileAPIContainer))
 
 

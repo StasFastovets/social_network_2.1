@@ -3,7 +3,7 @@ import React from 'react';
 import s from './preloader.module.scss'
 
 
-const Preloader = () => {
+const Preloader: React.FC = () => {
    return (
       <div className={s.container}>
          <img src={loadBar} />
