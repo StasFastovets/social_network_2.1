@@ -33,3 +33,11 @@ export const getfollowingInProgress = (state: AppStateType) => {
 export const getPortionSize = (state: AppStateType) => {
    return state.users.portionSize
 }
+
+export const getFilteredUsers = (state: AppStateType) => {
+   return state.users.filter
+}
+
+export const getPortionNumber = (state: AppStateType) => {
+   return state.users.portionNumber
+}

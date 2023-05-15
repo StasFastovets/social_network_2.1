@@ -1,5 +1,5 @@
 import s from './login.module.scss'
-import { Formik, Form } from 'formik'
+import { Formik, Form, FormikValues } from 'formik'
 import * as Yup from 'yup'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -18,7 +18,15 @@ const loginSchema = Yup.object().shape({
 })
 
 
-const Login = ({ active, setActive, isAuth, LogInTC, captcha }) => {
+type LoginPropsType = {
+   active: boolean
+   setActive: (active: boolean) => void
+   isAuth: boolean
+   LogInTC: (email: string, password: string, remember: boolean, captcha: string) => void
+   captcha: string | null
+ }
+
+const Login: React.FC<LoginPropsType> = ({ active, setActive, isAuth, LogInTC, captcha }) => {
 
    if (isAuth) {
       setActive(false)
@@ -35,7 +43,7 @@ const Login = ({ active, setActive, isAuth, LogInTC, captcha }) => {
       }
    }, [isAuth]);
 
-   const handleSubmit = (values) => {
+   const handleSubmit = (values: FormikValues) => {
       LogInTC(values.email, values.password, values.remember, values.captcha);
    };
 
@@ -48,7 +56,7 @@ const Login = ({ active, setActive, isAuth, LogInTC, captcha }) => {
                   ({ values, errors, touched, handleChange }) => (
                      <Form className={s.form}>
                         <div className={s.form_login}>
-                           <input name='password' type='text' onChange={handleChange} value={values.login} placeholder='password' />
+                           <input name='password' type='text' onChange={handleChange} value={values.password} placeholder='password' />
                            <p>{errors.password && touched.password && errors.password}</p>
                         </div>
                         <div className={s.form_login}>

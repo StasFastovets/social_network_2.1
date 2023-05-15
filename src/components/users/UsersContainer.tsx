@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { actionsUsers } from '../../redux/usersReducer';
+import { actionsUsers, FilterType } from '../../redux/usersReducer';
 import Users from './Users';
-import { getPageSize, getTotalUsersCount, getCurrentPage, getIsFetching, getfollowingInProgress, getCurrentUsers, getPortionSize } from '../../redux/users_selectors';
+import { getPageSize, getTotalUsersCount, getCurrentPage, getIsFetching, getfollowingInProgress, getCurrentUsers, getPortionSize, getFilteredUsers, getPortionNumber } from '../../redux/users_selectors';
 import { useEffect } from 'react';
 import { followUnfollowUserTC, getUsersTC } from '../../redux/usersReducer';
 import { UserType } from '../../redux/usersReducer';
@@ -25,24 +25,28 @@ type MapDispatchPropsType = {
    setCurrentPage: (page: number) => void,
    setPortionNumber: (portionNumber: number) => void
    followUnfollowUserTC: (id: number, follow: boolean) => void,
-   getUsersTC: (currentPage: number, pageSize: number) => void,
+   getUsersTC: (currentPage: number, pageSize: number, filter: FilterType) => void,
 }
 
 type PropsType = MapStatePropsType & MapDispatchPropsType
 
 const UsersAPIContainer: React.FC<PropsType> = ({ getUsersTC, setCurrentPage, setPortionNumber, ...props }) => {
    useEffect(() => {
-      return getUsersTC(props.currentPage, props.pageSize)
+      return getUsersTC(props.currentPage, props.pageSize, props.filter)
    }, [])
 
    const onPageChanget = (page: number, portionNumber: number) => {
       setCurrentPage(page)
       setPortionNumber(portionNumber)
-      getUsersTC(page, props.pageSize)
+      getUsersTC(page, props.pageSize, props.filter)
+   }
+
+   const onFilterChanget = (filter: FilterType) => {
+      getUsersTC(props.currentPage, props.pageSize, filter)
    }
 
    return (
-      <Users {...props} onPageChanget={onPageChanget} />
+      <Users {...props} onPageChanget={onPageChanget} onFilterChanget={onFilterChanget} />
    )
 }
 
@@ -55,7 +59,8 @@ let mapStateToProps = (state: AppStateType) => {
       isFetching: getIsFetching(state),
       followingInProgress: getfollowingInProgress(state),
       portionSize: getPortionSize(state),
-      portionNumber: state.users.portionNumber
+      portionNumber: getPortionNumber(state),
+      filter: getFilteredUsers(state),
    }
 }
 

@@ -80,8 +80,9 @@ type GetUsersType = {
    error: string | null
 }
 
-export const getUsers = async (currentPage: number, pageSize: number) => {
-   const response = await instance.get<GetUsersType>(`users?page=${currentPage}&count=${pageSize}`)
+export const getUsers = async (currentPage: number, pageSize: number, term: string = '', friend: null | boolean = null) => {
+   const response = await instance.get<GetUsersType>
+      (`users?page=${currentPage}&count=${pageSize}&term=${term}` + (friend === null ? '' : `&friend=${friend}`))
    return response.data
 }
 ////////////////////////////////////////////////////////////////////////////////////////////

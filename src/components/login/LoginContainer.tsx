@@ -5,6 +5,11 @@ import { AppStateType } from "../../redux/redux"
 import { boolean, string } from "yup"
 
 
+type OwnPropsType = {
+   active: boolean
+   setActive: (active: boolean) => void
+}
+
 type MapStatePropsType = {
    isAuth: boolean
    captcha: string | null
@@ -23,6 +28,6 @@ let mapStateToProps = (state: AppStateType): MapStatePropsType => {
 }
 
 
-const LoginContainer = connect<MapStatePropsType, MapDispatchPropsType, {}, AppStateType>(mapStateToProps, { LogInTC })(Login)
+const LoginContainer = connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(mapStateToProps, { LogInTC })(Login)
 
 export default LoginContainer

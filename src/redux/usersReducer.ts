@@ -20,14 +20,21 @@ let initialState = {
    isFetching: false,                              // отображение полосы загрузки
    followingInProgress: [] as Array<number>,       // 
    portionSize: 10,                                // количество порций(страничек)
-   portionNumber: 1
+   portionNumber: 1,
+   filter: {
+      term: '',
+      friend: null as null | boolean
+   }
 }
+
+export type FilterType = typeof initialState.filter
 
 type StateType = typeof initialState
 
 export const actionsUsers = {
    followUnfollowUsers: (userID: number, isSwitch: boolean) => ({ type: 'users/FOLLOW_UNFOLLOW', userID, isSwitch } as const),
    setUsers: (users: UserType[]) => ({ type: 'users/SET_USER', users } as const),
+   setFilter: (filter: FilterType) => ({ type: 'users/SET_FILTER', payload: filter } as const),
    setCurrentPage: (page: number) => ({ type: 'users/SET_CURRENT_PAGE', page: page } as const),
    setAllUsers: (usersCount: number) => ({ type: 'users/SET_ALL_USERS', usersCount } as const),
    setIsFetching: (isFetching: boolean) => ({ type: 'users/TOGGLE_IS_FETCHING', isFetching } as const),
@@ -68,19 +75,23 @@ const usersReducer = (state: StateType = initialState, action: ActionsType): Sta
          }
       case 'users/SET_PORTION_NUMBER':
          return { ...state, portionNumber: action.portionNumber }
+      case 'users/SET_FILTER':
+         return { ...state, filter: action.payload }
       default:
          return state
    }
 }
 
 
-type ThunkType = BaseThunkType<ActionsType> 
+type ThunkType = BaseThunkType<ActionsType>
 
-export const getUsersTC = (currentPage: number, pageSize: number): ThunkAction<void, AppStateType, unknown, ActionsType> => {
+export const getUsersTC = (currentPage: number, pageSize: number, filter: FilterType): ThunkAction<void, AppStateType, unknown, ActionsType> => {
    return (
       (dispatch) => {
          dispatch(actionsUsers.setIsFetching(true))
-         getUsers(currentPage, pageSize).then(data => {
+         // dispatch(actionsUsers.setCurrentPage(currentPage))
+         dispatch(actionsUsers.setFilter(filter))
+         getUsers(currentPage, pageSize, filter.term, filter.friend).then(data => {
             dispatch(actionsUsers.setUsers(data.items))
             dispatch(actionsUsers.setAllUsers(data.totalCount))
             dispatch(actionsUsers.setIsFetching(false))
