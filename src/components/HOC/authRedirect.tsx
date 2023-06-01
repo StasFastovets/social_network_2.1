@@ -20,8 +20,8 @@ import { getIsAuth } from "../../redux/profile_selectors ";
 //    isAuth: boolean;
 // }
 
-// export const withAuthRedirect = <P extends object>(Component: ComponentType<P>): React.FC<P & Props> => {
-//    const RedirectComponent: React.FC<P & Props> = (props) => {
+// export const withAuthRedirect = <P extends object>(Component: ComponentType<P>): React.FC<P> => {
+//    const RedirectComponent: React.FC<P> = (props) => {
 
 //       const location = useLocation()
 //       const isAuth = useSelector(getIsAuth)

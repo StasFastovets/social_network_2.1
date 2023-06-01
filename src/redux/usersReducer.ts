@@ -34,7 +34,7 @@ type StateType = typeof initialState
 export const actionsUsers = {
    followUnfollowUsers: (userID: number, isSwitch: boolean) => ({ type: 'users/FOLLOW_UNFOLLOW', userID, isSwitch } as const),
    setUsers: (users: UserType[]) => ({ type: 'users/SET_USER', users } as const),
-   setFilter: (term: string, friend: boolean) => ({ type: 'users/SET_FILTER', payload: {term, friend} } as const),
+   setFilter: (term: string, friend: boolean | null) => ({ type: 'users/SET_FILTER', payload: {term, friend} } as const),
    setCurrentPage: (page: number) => ({ type: 'users/SET_CURRENT_PAGE', page: page } as const),
    setAllUsers: (usersCount: number) => ({ type: 'users/SET_ALL_USERS', usersCount } as const),
    setIsFetching: (isFetching: boolean) => ({ type: 'users/TOGGLE_IS_FETCHING', isFetching } as const),
@@ -89,7 +89,7 @@ const usersReducer = (state: StateType = initialState, action: ActionsType): Sta
 
 export type ThunkUsersType = BaseThunkType<ActionsType>
 
-export const getUsersTC = (currentPage: number, pageSize: number, term: string, friend: boolean): ThunkAction<void, AppStateType, unknown, ActionsType> => {
+export const getUsersTC = (currentPage: number, pageSize: number, term: string, friend: boolean | null): ThunkAction<void, AppStateType, unknown, ActionsType> => {
    return (
       (dispatch) => {
          dispatch(actionsUsers.setIsFetching(true))

@@ -24,7 +24,7 @@ const UserSearchForm: React.FC<UserSearchFormType> = React.memo(
       const dispatch = useDispatch()
 
       const onFilterChanget = (filter: FilterType) => {
-         const action = getUsersTC(currentPage, pageSize, filter)
+         const action = getUsersTC(currentPage, pageSize, filter.term, filter.friend)
          dispatch(action as ThunkUsersType & AnyAction);
       }
 

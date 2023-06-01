@@ -30,12 +30,11 @@ const Users: React.FC = (props) => {
 
    useEffect(() => {
       let actualTerm 
-      let actualFriend = false 
+      let actualFriend: null | boolean = null
       let actualPage
 
       term.length ? actualTerm = term : actualTerm = filter.term
-      // friend.length ? friend == 'true' ? actualFriend = true : actualFriend = false : actualFriend = filter.friend
-      actualFriend = friend === 'true' || (friend !== null && friend === true);
+      friend.length ? friend == 'true' ? actualFriend = true : actualFriend = false : actualFriend = filter.friend
 
       const action = getUsersTC(currentPage, pageSize, actualTerm, actualFriend)
       dispatch(action as ThunkUsersType & AnyAction)

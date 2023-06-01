@@ -22,7 +22,7 @@ const Paginator: React.FC = (props) => {                                    // p
       dispatch(actionsUsers.setCurrentPage(pageNumber))
       dispatch(actionsUsers.setPortionNumber(portionNumber))
    
-      const action = getUsersTC(pageNumber, pageSize, filter)
+      const action = getUsersTC(pageNumber, pageSize, filter.term, filter.friend)
       dispatch(action as ThunkUsersType & AnyAction);
    }
    

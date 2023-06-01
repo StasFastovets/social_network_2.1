@@ -46,7 +46,7 @@ const Login: React.FC<LoginPropsType> = ({ active, setActive }) => {
    const navigate = useNavigate()
    const location = useLocation()
 
-   const fromPage = location.state || '/'
+   const fromPage = location.state || ''
 
 
    useEffect(() => {
