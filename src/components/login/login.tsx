@@ -5,6 +5,10 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom';
 import cn from 'classnames'
+import { useDispatch, useSelector } from 'react-redux';
+import { getAuth, getCaptcha } from '../../redux/authSelector'
+import { LogInTC, ThunkAuthType } from '../../redux/authReducer'
+import { AnyAction } from 'redux'
 
 const loginSchema = Yup.object().shape({
    password: Yup.string()
@@ -21,12 +25,19 @@ const loginSchema = Yup.object().shape({
 type LoginPropsType = {
    active: boolean
    setActive: (active: boolean) => void
-   isAuth: boolean
-   LogInTC: (email: string, password: string, remember: boolean, captcha: string) => void
-   captcha: string | null
- }
+}
 
-const Login: React.FC<LoginPropsType> = ({ active, setActive, isAuth, LogInTC, captcha }) => {
+const Login: React.FC<LoginPropsType> = ({ active, setActive }) => {
+
+   const isAuth = useSelector(getAuth)
+   const captcha = useSelector(getCaptcha)
+
+   const dispatch = useDispatch()
+
+   const logIn = (email: string, password: string, remember: boolean, captcha: string) => {
+      const action = LogInTC(email, password, remember, captcha)
+      dispatch(action as ThunkAuthType & AnyAction);
+   }
 
    if (isAuth) {
       setActive(false)
@@ -34,17 +45,19 @@ const Login: React.FC<LoginPropsType> = ({ active, setActive, isAuth, LogInTC, c
 
    const navigate = useNavigate()
    const location = useLocation()
-   const fromPage = location.state?.from?.pathname
+
+   const fromPage = location.state || '/'
 
 
    useEffect(() => {
       if (isAuth) {
          navigate(fromPage);
+         // navigate(-2);
       }
    }, [isAuth]);
 
    const handleSubmit = (values: FormikValues) => {
-      LogInTC(values.email, values.password, values.remember, values.captcha);
+      logIn(values.email, values.password, values.remember, values.captcha);
    };
 
 

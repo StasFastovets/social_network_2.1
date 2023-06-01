@@ -2,22 +2,35 @@ import s from './profileStatus.module.scss';
 import React, { useEffect, useState } from 'react';
 import Preloader from '../../other/preloader/preloader';
 import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getStatus } from '../../../redux/profile_selectors ';
+import { updataStatusOfUserTC } from '../../../redux/profileReducer';
+import { ThunkAuthType } from '../../../redux/authReducer';
+import { AnyAction } from 'redux';
 
 type ProfileStatusType = {
-   status: string | null
-   updataStatusOfUserTC: (status: string) => void
    isLoading: boolean
 }
 
 const ProfileStatus: React.FC<ProfileStatusType> = (props) => {
+
+   const userStatus = useSelector(getStatus)
+
+   const dispatch = useDispatch()
+
+   const updataStatusOfUser = (status: string) => {
+      const action = updataStatusOfUserTC(status)
+      dispatch(action as ThunkAuthType & AnyAction)
+   }
+
    let { userID } = useParams()
 
    let [editMode, setEditMode] = useState(false)
-   let [status, setStatus] = useState(props.status)
+   let [status, setStatus] = useState(userStatus)
 
    useEffect(() => {
-      setStatus(props.status)
-   }, [props.status])
+      setStatus(userStatus)
+   }, [userStatus])
 
 
    const activateEditMode = () => {
@@ -26,7 +39,7 @@ const ProfileStatus: React.FC<ProfileStatusType> = (props) => {
 
    const deactivateEditMode = () => {
       setEditMode(false)
-      props.updataStatusOfUserTC(status ?? '')
+      updataStatusOfUserTC(status ?? '')
    }
 
    const onStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +54,8 @@ const ProfileStatus: React.FC<ProfileStatusType> = (props) => {
       return (
          <div className={s.status}>
             <div className={s.status_top}>
-               <span>{props.status || 'No status'}</span>
+               {/* <span>{props.status || 'No status'}</span> */}
+               <span>{status || 'No status'}</span>
             </div>
          </div>
       )
@@ -51,7 +65,8 @@ const ProfileStatus: React.FC<ProfileStatusType> = (props) => {
       <div className={s.status}>
          {!editMode ?
             <div className={s.status_top}>
-               <span onClick={activateEditMode}>{props.status || 'No status'}</span>
+               {/* <span onClick={activateEditMode}>{props.status || 'No status'}</span> */}
+               <span onClick={activateEditMode}>{status || 'No status'}</span>
             </div> :
             <div className={s.status_buttom}>
                <input onChange={onStatusChange} autoFocus={true} onBlur={deactivateEditMode} value={status ?? ''} />

@@ -1,8 +1,14 @@
-import { Form, Formik } from 'formik'
+import { Form, Formik, FormikValues } from 'formik'
 import s from './profileDataForm.module.scss'
 import * as Yup from 'yup';
 import { useEffect, useState } from 'react';
 import cn from 'classnames'
+import { useDispatch, useSelector } from 'react-redux';
+import { saveProfileTC, StateProfileType } from '../../../redux/profileReducer';
+import { ProfileType, ThunkAuthType } from '../../../redux/authReducer';
+import { AnyAction } from 'redux';
+import { getContactsErrors, getProfile } from '../../../redux/profile_selectors ';
+
 
 
 const profileDataSchema = Yup.object().shape({
@@ -18,34 +24,50 @@ const profileDataSchema = Yup.object().shape({
 })
 
 
-const ProfileDataForm = ({ profile: { fullName, lookingForAJob, lookingForAJobDescription, aboutMe,  contacts }, userID, saveProfileTC,
-   setEditMode, contactsErrors }) => {
+type ProfileDataFormType = {
+   userID: number,
+   setEditMode: (editMode: boolean) => void,
+}
 
-   const [errorsList, setErrors] = useState([]);
+const ProfileDataForm: React.FC<ProfileDataFormType> = ({ userID, setEditMode }) => {
+
+   const profile = useSelector(getProfile)
+   const contactsErrors = useSelector(getContactsErrors)
+
+   const dispatch = useDispatch()
+
+   const saveProfile = (values: ProfileType, userID: number) => {
+      const action = saveProfileTC(values, userID)
+      dispatch(action as ThunkAuthType & AnyAction)
+   }
+
+   const [errorsList, setErrors] = useState([] as Array<string>);
 
    useEffect(() => {
       setErrors(contactsErrors);
    }, [contactsErrors]);
 
    let initialValues = {
-      fullName: fullName,
-      lookingForAJob: lookingForAJob,
-      lookingForAJobDescription: lookingForAJobDescription,
-      aboutMe: aboutMe,
+      userId: userID,
+      photos: profile.photos,
+      fullName: profile.fullName ?? '',
+      lookingForAJob: profile.lookingForAJob,
+      lookingForAJobDescription: profile.lookingForAJobDescription ?? '',
+      aboutMe: profile.aboutMe ?? '',
       contacts: {
-         facebook: contacts.facebook,
-         website: contacts.website,
-         vk: contacts.vk,
-         twitter: contacts.twitter,
-         instagram: contacts.instagram,
-         youtube: contacts.youtube,
-         github: contacts.github,
-         mainLink: contacts.mainLink
+         facebook: profile.contacts.facebook ?? '',
+         website: profile.contacts.website ?? '',
+         vk: profile.contacts.vk ?? '',
+         twitter: profile.contacts.twitter ?? '',
+         instagram: profile.contacts.instagram ?? '',
+         youtube: profile.contacts.youtube ?? '',
+         github: profile.contacts.github ?? '',
+         mainLink: profile.contacts.mainLink ?? ''
       }
    }
 
-   const handleSubmit = async (values) => {
-      await saveProfileTC(values, userID);
+   const handleSubmit = (values: ProfileType) => {
+      saveProfile(values, userID);
       setEditMode(false)
    }
 
@@ -65,7 +87,7 @@ const ProfileDataForm = ({ profile: { fullName, lookingForAJob, lookingForAJobDe
                      <div className={s.aboutMe}>
                         <p className={s.text}>About me:</p>
                         <div className={s.row}>
-                           <textarea className={s.description} name='aboutMe' type='text' onChange={handleChange} value={values.aboutMe} />
+                           <textarea className={s.description} name='aboutMe' onChange={handleChange} value={values.aboutMe} />
                            <p className={s.error}>{errors.aboutMe && touched.aboutMe && errors.aboutMe}</p>
                         </div>
                      </div>
@@ -78,7 +100,7 @@ const ProfileDataForm = ({ profile: { fullName, lookingForAJob, lookingForAJobDe
                      <div className={s.lookingForAJobDescription}>
                         <p className={s.text}>My professional skills:</p>
                         <div className={s.row}>
-                           <textarea className={s.description} name='lookingForAJobDescription' type='text' onChange={handleChange} value={values.lookingForAJobDescription} />
+                           <textarea className={s.description} name='lookingForAJobDescription' onChange={handleChange} value={values.lookingForAJobDescription} />
                            <p className={s.error}>{errors.lookingForAJobDescription && touched.lookingForAJobDescription && errors.lookingForAJobDescription}</p>
                         </div>
                      </div>
@@ -139,3 +161,5 @@ const ProfileDataForm = ({ profile: { fullName, lookingForAJob, lookingForAJobDe
 }
 
 export default ProfileDataForm
+
+

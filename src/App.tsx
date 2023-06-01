@@ -1,12 +1,10 @@
 import style from './App.module.scss';
 import { Route, Routes } from 'react-router-dom';
-import HeaderContainer from './components/header/HeaderContainer';
 import Navigation from './components/navbar/navbar';
-import ProfileContainer from './components/profile/ProfileContainer';
 import LoginInfo from './components/login/login_info';
 import { Suspense, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { InitializedAppTC } from './redux/appReducer';
+import { connect, useSelector, useDispatch } from 'react-redux';
+import { InitializedAppTC, ThunkAppType } from './redux/appReducer';
 import Preloader from './components/other/preloader/preloader';
 import HomePage from './components/home/HomePage';
 import NotFoundPage from './components/not_found_page/NotFoundPage';
@@ -16,33 +14,31 @@ import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from './components/other/errorFallback/ErrorFallback';
 import Footer from './components/footer/Footer';
 import { AppStateType } from './redux/redux';
+import { initializedApp } from './redux/appSelectors';
+import { AnyAction } from 'redux';
+import Header from './components/header/Header';
+import Profile from './components/profile/Profile';
 
 
 const DialogsContainer = React.lazy(() => import('./components/dialogs/DialogsContainer'));
-const UsersContainer = React.lazy(() => import('./components/users/UsersContainer'));
+const Users = React.lazy(() => import('./components/users/Users'));
 const NewsContainer = React.lazy(() => import('./components/news/NewsContainer'));
 const MusicContainer = React.lazy(() => import('./components/music/MusicContainer'));
 
 
-type MapStatePropsType = {
-  initialized: boolean
-}
-type MapDispatchPropsType = {
-  InitializedAppTC: () => void
-}
-type OwnPropsType = {
-}
 
-type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType
+const App: React.FC = (props) => {
 
+  const initialized = useSelector(initializedApp)
 
-const App: React.FC<PropsType> = (props) => {
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    props.InitializedAppTC()
+    const action = InitializedAppTC()
+    dispatch(action as ThunkAppType & AnyAction);
   }, [])
 
-  if (!props.initialized) {
+  if (!initialized) {
     return <Preloader />
   }
 
@@ -51,7 +47,7 @@ const App: React.FC<PropsType> = (props) => {
       <div className={style.container}>
         <div className={style.body}>
           <div className={style.header}>
-            <HeaderContainer />
+            <Header />
           </div>
           <div className={style.navigation}>
             <Navigation />
@@ -61,10 +57,10 @@ const App: React.FC<PropsType> = (props) => {
               <ErrorBoundary FallbackComponent={ErrorFallback}>
                 <Routes>
                   <Route path='/' element={<HomePage />} />
-                  <Route path='/profile/:userID' element={<ProfileContainer />} />
-                  <Route path='/profile/' element={<ProfileContainer />} />
+                  <Route path='/profile/:userID' element={<Profile />} />
+                  <Route path='/profile/' element={<Profile />} />
                   <Route path='/dialogs/*' element={<DialogsContainer />} />
-                  <Route path='/users/' element={<UsersContainer />} />
+                  <Route path='/users/' element={<Users />} />
                   <Route path='/login/' element={<LoginInfo />} />
                   <Route path='/news/' element={<NewsContainer />} />
                   <Route path='/music/' element={<MusicContainer />} />
@@ -84,12 +80,5 @@ const App: React.FC<PropsType> = (props) => {
 }
 
 
-let mapStateToProps = (state: AppStateType): MapStatePropsType => {
-  return {
-    initialized: state.app.initialized
-  }
-}
 
-const AppContainer = connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(mapStateToProps, { InitializedAppTC })(App)
-
-export default AppContainer
+export default App

@@ -113,9 +113,9 @@ const authReducer = (state: StateType = initialState, action: ActionsType): Stat
 
 
 // type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsType>
-type ThunkType = BaseThunkType<ActionsType | ReturnType<typeof actionsProfile.setProfilePhotosAC>>
+export type ThunkAuthType = BaseThunkType<ActionsType | ReturnType<typeof actionsProfile.setProfilePhotosAC>>
 
-export const authTC = (): ThunkType => async (dispatch) => {
+export const authTC = (): ThunkAuthType => async (dispatch) => {
    const response = await getAuth()
    if (response.resultCode === ResultCode.Success) {
       let email = response.data.email
@@ -127,7 +127,7 @@ export const authTC = (): ThunkType => async (dispatch) => {
    }
 }
 
-export const logOutTC = (): ThunkType => async (dispatch) => {
+export const logOutTC = (): ThunkAuthType => async (dispatch) => {
    dispatch(actions.setIsLoadingAC(true))
    const response = await logOut()
    if (response.resultCode === ResultCode.Success) {
@@ -136,7 +136,7 @@ export const logOutTC = (): ThunkType => async (dispatch) => {
    }
 }
 
-export const LogInTC = (email: string, password: string, rememberMe: boolean, captcha: string): ThunkType => async (dispatch) => {
+export const LogInTC = (email: string, password: string, rememberMe: boolean, captcha: string): ThunkAuthType => async (dispatch) => {
    let response = await logIn(email, password, rememberMe, captcha)
    if (response.resultCode === ResultCode.Success) {
       dispatch(authTC())
@@ -147,14 +147,14 @@ export const LogInTC = (email: string, password: string, rememberMe: boolean, ca
    }
 }
 
-export const getCaptchaTC = (): ThunkType => async (dispatch) => {
+export const getCaptchaTC = (): ThunkAuthType => async (dispatch) => {
    const response = await getCaptchaUrl()
    const captcha = response.url
    dispatch(actions.setCaptchaAC(captcha))
 }
 
 
-export const savePhotoTC = (photo: File): ThunkType => async (dispatch) => {
+export const savePhotoTC = (photo: File): ThunkAuthType => async (dispatch) => {
    dispatch(actions.setIsLoadingAC(true))
    let response = await savePhoto(photo)
    if (response.resultCode === ResultCode.Success) {

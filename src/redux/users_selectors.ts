@@ -6,7 +6,7 @@ import {AppStateType} from './redux'
 // })
 
 
-export const getCurrentUsers = (state: AppStateType) => {
+export const getUsers = (state: AppStateType) => {
    return state.users.users
 }
 

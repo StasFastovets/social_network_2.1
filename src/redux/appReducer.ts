@@ -29,10 +29,10 @@ const appReducer = (state: StateType = initialState, action: ActionsType): State
    }
 }
 
-type ThunkType = BaseThunkType<ActionsType> 
+export type ThunkAppType = BaseThunkType<ActionsType> 
 // type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsType>
 
-export const InitializedAppTC = (): ThunkType => async (dispatch) => {
+export const InitializedAppTC = (): ThunkAppType => async (dispatch) => {
    await dispatch(authTC())
    dispatch(actionsApp.initializedSuccess())
 }

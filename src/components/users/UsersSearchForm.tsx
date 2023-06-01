@@ -1,38 +1,48 @@
 import { useFormik, Field } from 'formik';
 import * as Yup from 'yup'
 import s from './users.module.scss';
-import { FilterType } from '../../redux/usersReducer';
+import { FilterType, getUsersTC, ThunkUsersType } from '../../redux/usersReducer';
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getCurrentPage, getPageSize } from '../../redux/users_selectors';
+import { AnyAction } from 'redux';
+import { getFilteredUsers } from './../../redux/users_selectors';
 
 
-
-type PropsType = {
-   onFilterChanget: (filter: FilterType) => void
+type UserSearchFormType = {
+   term: string
+   friend: string
+   setSearchParams: () => void
 }
 
-const UserSearchForm: React.FC<PropsType> = React.memo(
-   ({ onFilterChanget }) => {
+const UserSearchForm: React.FC<UserSearchFormType> = React.memo(
+   ({term, friend, setSearchParams}) => {
+
+      const currentPage = useSelector(getCurrentPage)
+      const pageSize = useSelector(getPageSize)
+
+      const dispatch = useDispatch()
+
+      const onFilterChanget = (filter: FilterType) => {
+         const action = getUsersTC(currentPage, pageSize, filter)
+         dispatch(action as ThunkUsersType & AnyAction);
+      }
+
       const formik = useFormik({
          initialValues: {
-            term: '',
-            friend: null
+            term: term,
+            friend: friend
          },
-         // validationSchema: Yup.object().shape({
-         //    term: Yup.string()
-         //       .matches(/[a-zA-Zа-яА-ЯёЁ0-9]$/, { message: 'Forbidden symbols' })
-         //       .required('Please enter valid search parameters')
-         // }),
          onSubmit: values => {
-            // onFilterChanget(values)
             const friend = values.friend === "true" ? true : values.friend === "false" ? false : null;
             onFilterChanget({ term: values.term, friend });
          },
       });
 
       return (
-         <form onSubmit={formik.handleSubmit}> 
+         <form onSubmit={formik.handleSubmit}>
             <div className={s.form__search}>
-               <input 
+               <input
                   name='term'
                   type='text'
                   onChange={formik.handleChange}

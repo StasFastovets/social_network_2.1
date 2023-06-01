@@ -20,3 +20,7 @@ export const getIsLoading = (state: AppStateType) => {
    return state.profile.isLoading
 }
 
+export const getContactsErrors = (state: AppStateType) => {
+   return state.profile.contactsErrors
+}
+

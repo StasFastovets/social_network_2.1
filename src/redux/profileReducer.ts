@@ -35,7 +35,7 @@ let initialState = {
    contactsErrors: [] as Array<string>
 }
 
-type StateType = typeof initialState
+export type StateProfileType = typeof initialState
 
 export const actionsProfile = {
    setUserProfileAC: (profile: ProfileType) => ({ type: 'profile/SET_USER', profile } as const),
@@ -48,7 +48,7 @@ export const actionsProfile = {
 
 type ActionsType = ReturnType<PropertiesTypes<typeof actionsProfile>>
 
-const profileReducer = (state: StateType = initialState, action: ActionsType): StateType => {
+const profileReducer = (state: StateProfileType = initialState, action: ActionsType): StateProfileType => {
    switch (action.type) {
       case 'profile/SET_USER':
          return {
@@ -97,7 +97,7 @@ const profileReducer = (state: StateType = initialState, action: ActionsType): S
 }
 
 
-type ThunkType = BaseThunkType<ActionsType> 
+type ThunkType = BaseThunkType<ActionsType>
 
 export const getUserProfileTC = (userID: number): ThunkType => async (dispatch) => {
    let response = await getUser(userID)

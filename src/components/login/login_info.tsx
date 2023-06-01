@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import React from 'react';
-import LoginContainer from './LoginContainer';
 import s from './loginInfo.module.scss'
 
 const LoginInfo = () => {

@@ -26,6 +26,8 @@ export type PropertiesTypes<T> = T extends { [key: string]: infer U } ? U : neve
 //export type BaseThunkType< A extends Action, R = Promise<void> > = ThunkAction<R, AppStateType, unknown, A> 
 export type BaseThunkType< BasicAction extends Action, ReturnType = Promise<void> > = ThunkAction<ReturnType, AppStateType, unknown, BasicAction> 
 
+// export type AppDispatch = typeof store.dispatch
+
 export default store
 
 

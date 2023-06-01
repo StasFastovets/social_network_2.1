@@ -2,24 +2,40 @@ import s from './Profile.module.scss'
 import Preloader from '../other/preloader/preloader'
 import ava from './../../img/ava.jpg'
 import ProfileStatus from './profileStatus/ProfileStatus'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import ProfileDataForm from './profileDataForm/ProfileDataForm'
-import { ProfileType } from '../../redux/authReducer'
+import { ProfileType, savePhotoTC, ThunkAuthType } from '../../redux/authReducer'
+import { useParams } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux';
+import { getAuthorizedUserID, getContactsErrors, getIsLoading, getProfile } from '../../redux/profile_selectors '
+import { getStatusOfUserTC, getUserProfileTC } from '../../redux/profileReducer'
+import { AnyAction, compose } from 'redux'
+import { withAuthRedirect } from '../HOC/authRedirect'
 
 
-type PropsType = {
-   profile: ProfileType 
-   authorizedUserID: number | null 
-   userID: number 
-   savePhotoTC: (photos: File) => void
-   saveProfileTC: (values: ProfileType, userID: number) => void
-   isLoading: boolean 
-   contactsErrors: string[]
-   status: string 
-   updataStatusOfUserTC: (status: string) => void
-}
+const Profile: React.FC = (props) => {
 
-const Profile: React.FC<PropsType> = ({ profile, authorizedUserID, userID, savePhotoTC, isLoading, saveProfileTC, contactsErrors, ...props }) => {
+   const authorizedUserID = useSelector(getAuthorizedUserID)
+   const profile = useSelector(getProfile)
+   const isLoading = useSelector(getIsLoading)
+   const contactsErrors = useSelector(getContactsErrors)
+
+   const dispatch = useDispatch()
+
+   const savePhoto = (photos: File) => {
+      const action = savePhotoTC(photos)
+      dispatch(action as ThunkAuthType & AnyAction)
+   }
+
+   let { userID } = useParams<{ userID?: string }>()
+   const parsedUserID = userID ? parseInt(userID) : authorizedUserID ?? 0;
+
+   useEffect(() => {
+      const action = getUserProfileTC(parsedUserID)
+      dispatch(action as ThunkAuthType & AnyAction)
+      const actionStatus = getStatusOfUserTC(parsedUserID)
+      dispatch(actionStatus as ThunkAuthType & AnyAction)
+   }, [userID])
 
    let [editMode, setEditMode] = useState<boolean>(false)
 
@@ -33,7 +49,7 @@ const Profile: React.FC<PropsType> = ({ profile, authorizedUserID, userID, saveP
 
    const onProfilePhotoSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
       // if (e.target.files && e.target.files.length) {
-         if (e.target.files?.length) {
+      if (e.target.files?.length) {
          savePhotoTC(e.target.files[0])
       }
    }
@@ -41,16 +57,16 @@ const Profile: React.FC<PropsType> = ({ profile, authorizedUserID, userID, saveP
    return (
       <div className={s.content}>
          <div className={s.status}>
-            <ProfileStatus isLoading={isLoading} {...props} />
-          </div>
+            <ProfileStatus isLoading={isLoading} />
+         </div>
          <div className={s.info}>
             <img className={s.info_img} src={profile.photos.large ? profile.photos.large : ava} alt="#"></img>
             <div className={s.upload}>
-               {userID == authorizedUserID && <input type='file' onChange={onProfilePhotoSelected} />}
+               {parsedUserID === authorizedUserID && <input type='file' onChange={onProfilePhotoSelected} />}
             </div>
-            {userID === authorizedUserID && editMode ?
-               <ProfileDataForm profile={profile} userID={userID} saveProfileTC={saveProfileTC} setEditMode={setEditMode} contactsErrors={contactsErrors} /> :
-               <ProfileData profile={profile} authorizedUserID={authorizedUserID} userID={userID} goToEditMode={goToEditMode} />}
+            {parsedUserID === authorizedUserID && editMode ?
+               <ProfileDataForm userID={parsedUserID} setEditMode={setEditMode} /> :
+               <ProfileData profile={profile} authorizedUserID={authorizedUserID} userID={parsedUserID} goToEditMode={goToEditMode} />}
          </div>
       </div>
    )
@@ -61,13 +77,13 @@ type ProfileDataType = {
    userID: number;
    authorizedUserID: number | null;
    goToEditMode: () => void;
- };
+};
 
 const ProfileData: React.FC<ProfileDataType> = ({ profile, userID, authorizedUserID, goToEditMode }) => {
    return (
       <div className={s.info_text}>
          <div className={s.info_fullName}>{profile.fullName}</div>
-         <div className={s.info_row}> 
+         <div className={s.info_row}>
             <span className={s.title}>About me:</span> {profile.aboutMe}
          </div>
          <div className={s.info_row}>
@@ -89,7 +105,7 @@ const ProfileData: React.FC<ProfileDataType> = ({ profile, userID, authorizedUse
 }
 
 type ContactsType = {
-   contactTitle: string 
+   contactTitle: string
    contactValue: string | null
 }
 
@@ -104,5 +120,6 @@ const Contacts: React.FC<ContactsType> = ({ contactTitle, contactValue }) => {
    )
 }
 
-export default Profile;
+// export default Profile;
+export default compose(withAuthRedirect)(Profile)
 
