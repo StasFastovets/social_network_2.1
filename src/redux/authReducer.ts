@@ -3,10 +3,9 @@ import { getAuth, getCaptchaUrl, ResultCode } from '../API/api';
 import { logOut } from '../API/api';
 import { logIn, getUser, savePhoto } from '../API/api';
 import { actionsProfile } from './profileReducer';
-
 import { AppStateType, BaseThunkType, PropertiesTypes } from './redux';
 import Nullable from './nullable'
-import { Action } from 'redux';
+
 
 
 export type PhotosType = {

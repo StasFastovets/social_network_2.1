@@ -21,6 +21,6 @@ export const getIsLoading = (state: AppStateType) => {
 }
 
 export const getContactsErrors = (state: AppStateType) => {
-   return state.profile.contactsErrors
+   return state.profile.contactsErrors 
 }
 

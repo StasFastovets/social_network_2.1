@@ -7,6 +7,81 @@ import { getStatus } from '../../../redux/profile_selectors ';
 import { updataStatusOfUserTC } from '../../../redux/profileReducer';
 import { ThunkAuthType } from '../../../redux/authReducer';
 import { AnyAction } from 'redux';
+import { Form, Formik, FormikValues } from 'formik';
+import { updateStatusOfUser } from './../../../API/api';
+
+// type ProfileStatusType = {
+//    isLoading: boolean
+// }
+
+// const ProfileStatus: React.FC<ProfileStatusType> = (props) => {
+
+//    const userStatus = useSelector(getStatus)
+
+//    const dispatch = useDispatch()
+
+//    const updataStatusOfUser = (status: string) => {
+//       const action = updataStatusOfUserTC(status)
+//       dispatch(action as ThunkAuthType & AnyAction)
+//    }
+
+//    let { userID } = useParams()
+
+//    let [editMode, setEditMode] = useState(false)
+//    let [status, setStatus] = useState(userStatus)
+
+//    useEffect(() => {
+//       setStatus(userStatus)
+//    }, [userStatus])
+
+
+//    const activateEditMode = () => {
+//       setEditMode(true)
+//    }
+
+//    const deactivateEditMode = () => {
+//       setEditMode(false)
+//       updataStatusOfUserTC(status ?? '')
+//    }
+
+//    const onStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//       setStatus(e.currentTarget.value)
+//    }
+
+//    if (props.isLoading) {
+//       return <Preloader />
+//    }
+
+//    if (userID !== undefined) {
+//       return (
+//          <div className={s.status}>
+//             <div className={s.status_top}>
+//                {/* <span>{props.status || 'No status'}</span> */}
+//                <span>{status || 'No status'}</span>
+//             </div>
+//          </div>
+//       )
+//    }
+
+//    return (
+//       <div className={s.status}>
+//          {!editMode ?
+//             <div className={s.status_top}>
+//                {/* <span onClick={activateEditMode}>{props.status || 'No status'}</span> */}
+//                <span onClick={activateEditMode}>{status || 'No status'}</span>
+//             </div> :
+//             <div className={s.status_buttom}>
+//                <input onChange={onStatusChange} autoFocus={true} onBlur={deactivateEditMode} value={status ?? ''} />
+//             </div>
+//          }
+//       </div>
+//    )
+// }
+
+
+// export default ProfileStatus;
+
+
 
 type ProfileStatusType = {
    isLoading: boolean
@@ -37,14 +112,18 @@ const ProfileStatus: React.FC<ProfileStatusType> = (props) => {
       setEditMode(true)
    }
 
-   const deactivateEditMode = () => {
-      setEditMode(false)
-      updataStatusOfUserTC(status ?? '')
-   }
+   // const deactivateEditMode = (values: FormikValues) => {
+   //    setEditMode(false)
+   //    updataStatusOfUserTC(values.status)
+   // }
 
-   const onStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setStatus(e.currentTarget.value)
-   }
+   // const onStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+   //    setStatus(e.currentTarget.value)
+   // }
+   const handleSubmit = (values: FormikValues) => {
+      setEditMode(false)
+      updateStatusOfUser(values.status)
+   };
 
    if (props.isLoading) {
       return <Preloader />
@@ -69,7 +148,19 @@ const ProfileStatus: React.FC<ProfileStatusType> = (props) => {
                <span onClick={activateEditMode}>{status || 'No status'}</span>
             </div> :
             <div className={s.status_buttom}>
-               <input onChange={onStatusChange} autoFocus={true} onBlur={deactivateEditMode} value={status ?? ''} />
+               <Formik initialValues={{ status: userStatus }} onSubmit={handleSubmit}>
+                  {
+                     ({ values, errors, touched, handleChange }) => (
+                        <Form className={s.form}>
+                           <div className={s.form_login}>
+                              {/* <input name='password' type='text' onChange={handleChange} value={values.password} placeholder='password' /> */}
+                              <input name='status' type='text' onChange={handleChange} autoFocus={true} value={values.status} />
+                              <button type='submit'>Login</button>
+                           </div>
+                        </Form>
+                     )
+                  }
+               </Formik>
             </div>
          }
       </div>

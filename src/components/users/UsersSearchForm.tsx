@@ -16,7 +16,7 @@ type UserSearchFormType = {
 }
 
 const UserSearchForm: React.FC<UserSearchFormType> = React.memo(
-   ({term, friend, setSearchParams}) => {
+   ({term, friend}) => {
 
       const currentPage = useSelector(getCurrentPage)
       const pageSize = useSelector(getPageSize)

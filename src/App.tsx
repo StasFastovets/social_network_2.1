@@ -13,7 +13,6 @@ import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import ErrorFallback from './components/other/errorFallback/ErrorFallback';
 import Footer from './components/footer/Footer';
-import { AppStateType } from './redux/redux';
 import { initializedApp } from './redux/appSelectors';
 import { AnyAction } from 'redux';
 import Header from './components/header/Header';
