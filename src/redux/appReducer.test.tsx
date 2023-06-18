@@ -1,5 +1,5 @@
-// import appReducer, { actionsApp, InitializedAppTC } from './appReducer'
-// import { authTC } from './authReducer';
+import appReducer, { actionsApp, InitializedAppTC } from './appReducer'
+import { authTC } from './authReducer';
 
 // describe('appReducer', () => {
 //    let state: any;

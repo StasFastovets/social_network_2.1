@@ -1,4 +1,5 @@
-import {AppStateType} from './redux'
+import { AppStateType } from './redux'
+import { createSelector } from 'reselect';
 
 // import { createSelector } from 'reselect';
 // export const getUsersSuperSelector = createSelector(getUsers, (users) => {
@@ -6,38 +7,83 @@ import {AppStateType} from './redux'
 // })
 
 
-export const getUsers = (state: AppStateType) => {
-   return state.users.users
-}
+// export const getUsers = (state: AppStateType) => {
+//    return state.users.users
+// }
 
-export const getPageSize = (state: AppStateType) => {
+export const getUsers = createSelector(
+   (state: AppStateType) => state.users.users,
+   (users) => users);
+
+export const getPageSizeSelector = (state: AppStateType) => {
    return state.users.pageSize
 }
 
-export const getTotalUsersCount = (state: AppStateType) => {
+export const getPageSize = createSelector(
+   getPageSizeSelector,
+   (pageSize) => pageSize
+);
+
+export const getTotalUsersCountSelector = (state: AppStateType) => {
    return state.users.totalUsersCount
 }
 
-export const getCurrentPage = (state: AppStateType) => {
+export const getTotalUsersCount = createSelector(
+   getTotalUsersCountSelector,
+   (totalUsersCount) => totalUsersCount
+);
+
+export const getCurrentPageSelector = (state: AppStateType) => {
    return state.users.currentPage
 }
 
-export const getIsFetching = (state: AppStateType) => {
+export const getCurrentPage = createSelector(
+   getCurrentPageSelector,
+   (currentPage) => currentPage
+);
+
+export const getIsFetchingSelector = (state: AppStateType) => {
    return state.users.isFetching
 }
 
-export const getfollowingInProgress = (state: AppStateType) => {
+export const getIsFetching = createSelector(
+   getIsFetchingSelector,
+   (isFetching) => isFetching
+);
+
+export const getfollowingInProgressSelector = (state: AppStateType) => {
    return state.users.followingInProgress
 }
 
-export const getPortionSize = (state: AppStateType) => {
+export const getfollowingInProgress = createSelector(
+   getfollowingInProgressSelector,
+   (followingInProgress) => followingInProgress
+);
+
+export const getPortionSizeSelector = (state: AppStateType) => {
    return state.users.portionSize
 }
 
-export const getFilteredUsers = (state: AppStateType) => {
+export const getPortionSize = createSelector(
+   getPortionSizeSelector,
+   (portionSize) => portionSize
+);
+
+
+export const getFilteredUsersSelector = (state: AppStateType) => {
    return state.users.filter
 }
 
-export const getPortionNumber = (state: AppStateType) => {
+export const getFilteredUsers = createSelector(
+   getFilteredUsersSelector,
+   (filter) => filter
+);
+
+export const getPortionNumberSelector = (state: AppStateType) => {
    return state.users.portionNumber
 }
+
+export const getPortionNumber = createSelector(
+   getPortionNumberSelector,
+   (portionNumber) => portionNumber
+);

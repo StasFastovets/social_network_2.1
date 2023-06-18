@@ -112,17 +112,9 @@ const ProfileStatus: React.FC<ProfileStatusType> = (props) => {
       setEditMode(true)
    }
 
-   // const deactivateEditMode = (values: FormikValues) => {
-   //    setEditMode(false)
-   //    updataStatusOfUserTC(values.status)
-   // }
-
-   // const onStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-   //    setStatus(e.currentTarget.value)
-   // }
    const handleSubmit = (values: FormikValues) => {
       setEditMode(false)
-      updateStatusOfUser(values.status)
+      updataStatusOfUser(values.status)
    };
 
    if (props.isLoading) {
@@ -133,7 +125,6 @@ const ProfileStatus: React.FC<ProfileStatusType> = (props) => {
       return (
          <div className={s.status}>
             <div className={s.status_top}>
-               {/* <span>{props.status || 'No status'}</span> */}
                <span>{status || 'No status'}</span>
             </div>
          </div>
@@ -144,18 +135,15 @@ const ProfileStatus: React.FC<ProfileStatusType> = (props) => {
       <div className={s.status}>
          {!editMode ?
             <div className={s.status_top}>
-               {/* <span onClick={activateEditMode}>{props.status || 'No status'}</span> */}
                <span onClick={activateEditMode}>{status || 'No status'}</span>
             </div> :
             <div className={s.status_buttom}>
-               <Formik initialValues={{ status: userStatus }} onSubmit={handleSubmit}>
+               <Formik initialValues={{ status: userStatus }} onSubmit={handleSubmit} >
                   {
-                     ({ values, errors, touched, handleChange }) => (
+                     ({ values, handleChange }) => (
                         <Form className={s.form}>
                            <div className={s.form_login}>
-                              {/* <input name='password' type='text' onChange={handleChange} value={values.password} placeholder='password' /> */}
-                              <input name='status' type='text' onChange={handleChange} autoFocus={true} value={values.status} />
-                              <button type='submit'>Login</button>
+                              <input name='status' type='text' onBlur={() => handleSubmit(values)} onChange={handleChange} autoFocus={true} value={values.status} />
                            </div>
                         </Form>
                      )
