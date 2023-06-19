@@ -16,7 +16,7 @@ type UserSearchFormType = {
 }
 
 const UserSearchForm: React.FC<UserSearchFormType> = React.memo(
-   ({term, friend}) => {
+   ({ term, friend }) => {
 
       const currentPage = useSelector(getCurrentPage)
       const pageSize = useSelector(getPageSize)
@@ -52,7 +52,7 @@ const UserSearchForm: React.FC<UserSearchFormType> = React.memo(
                {formik.touched.term && formik.errors.term ? <p>{formik.errors.term}</p> : null}
             </div>
             <div className={s.form__select}>
-               <select name="friend" onChange={formik.handleChange}>
+               <select name="friend" onChange={formik.handleChange} value={formik.values.friend}>
                   <option value="null">All</option>
                   <option value="true">Only followed</option>
                   <option value="false">Only unfollowed</option>
