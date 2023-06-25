@@ -69,11 +69,11 @@ const Login: React.FC<LoginPropsType> = ({ active, setActive }) => {
                   ({ values, errors, touched, handleChange }) => (
                      <Form className={s.form}>
                         <div className={s.form_login}>
-                           <input name='password' type='text' onChange={handleChange} value={values.password} placeholder='password' />
+                           <input name='password' type='text' onChange={handleChange} value={values.password} placeholder='password' autoComplete='on'/>
                            <p>{errors.password && touched.password && errors.password}</p>
                         </div>
                         <div className={s.form_login}>
-                           <input name='email' type='email' onChange={handleChange} value={values.email} placeholder='Email' />
+                           <input name='email' type='email' onChange={handleChange} value={values.email} placeholder='Email' autoComplete='on' />
                            <p>{errors.email && touched.email && errors.email}</p>
                         </div>
                         <div className={s.form_remember}>

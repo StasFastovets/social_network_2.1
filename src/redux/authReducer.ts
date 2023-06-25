@@ -117,9 +117,7 @@ export type ThunkAuthType = BaseThunkType<ActionsType | ReturnType<typeof action
 export const authTC = (): ThunkAuthType => async (dispatch) => {
    const response = await getAuth()
    if (response.resultCode === ResultCode.Success) {
-      let email = response.data.email
-      let id = response.data.id
-      let login = response.data.login
+      const { email, id, login } = response.data
       dispatch(actions.setUserDataAC(id, email, login, true))
       const userData = await getUser(id)
       dispatch(actions.setUserAC(userData))

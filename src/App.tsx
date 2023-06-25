@@ -18,12 +18,13 @@ import { AnyAction } from 'redux';
 import Header from './components/header/Header';
 import Profile from './components/profile/Profile';
 
+ 
 
 const DialogsContainer = React.lazy(() => import('./components/dialogs/DialogsContainer'));
 const Users = React.lazy(() => import('./components/users/Users'));
 const NewsContainer = React.lazy(() => import('./components/news/NewsContainer'));
 const MusicContainer = React.lazy(() => import('./components/music/MusicContainer'));
-
+const ChatPage = React.lazy(() => import('./pages/chat/ChatPage'));
 
 
 const App: React.FC = (props) => {
@@ -64,6 +65,7 @@ const App: React.FC = (props) => {
                   <Route path='/news/' element={<NewsContainer />} />
                   <Route path='/music/' element={<MusicContainer />} />
                   <Route path='/settings/' element={<SettingsContainer />} />
+                  <Route path='/chat/' element={<ChatPage />} />
                   <Route path='*' element={<NotFoundPage />} />
                 </Routes>
               </ErrorBoundary>
