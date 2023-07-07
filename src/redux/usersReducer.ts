@@ -1,6 +1,7 @@
 import { ThunkAction } from 'redux-thunk';
 import { unfollowUser, getUsers, followUser, ResultCode } from '../API/api';
 import { PhotosType } from './authReducer';
+import { actionsErrors } from './errorsReducer';
 import { AppStateType, BaseThunkType, PropertiesTypes } from './redux';
 
 
@@ -34,7 +35,7 @@ type StateType = typeof initialState
 export const actionsUsers = {
    followUnfollowUsers: (userID: number, isSwitch: boolean) => ({ type: 'users/FOLLOW_UNFOLLOW', userID, isSwitch } as const),
    setUsers: (users: UserType[]) => ({ type: 'users/SET_USER', users } as const),
-   setFilter: (term: string, friend: boolean | null) => ({ type: 'users/SET_FILTER', payload: {term, friend} } as const),
+   setFilter: (term: string, friend: boolean | null) => ({ type: 'users/SET_FILTER', payload: { term, friend } } as const),
    setCurrentPage: (page: number) => ({ type: 'users/SET_CURRENT_PAGE', page: page } as const),
    setAllUsers: (usersCount: number) => ({ type: 'users/SET_ALL_USERS', usersCount } as const),
    setIsFetching: (isFetching: boolean) => ({ type: 'users/TOGGLE_IS_FETCHING', isFetching } as const),
@@ -76,32 +77,53 @@ const usersReducer = (state: StateType = initialState, action: ActionsType): Sta
       case 'users/SET_PORTION_NUMBER':
          return { ...state, portionNumber: action.portionNumber }
       case 'users/SET_FILTER':
-         return { ...state, 
+         return {
+            ...state,
             filter: {
-               term: action.payload.term, 
-               friend: action.payload.friend 
-            }}
+               term: action.payload.term,
+               friend: action.payload.friend
+            }
+         }
       default:
          return state
    }
 }
 
 
-export type ThunkUsersType = BaseThunkType<ActionsType>
+export type ThunkUsersType = BaseThunkType<ActionsType | ReturnType<typeof actionsErrors.setErrorAC>> 
 
-export const getUsersTC = (currentPage: number, pageSize: number, term: string, friend: boolean | null): ThunkAction<void, AppStateType, unknown, ActionsType> => {
-   return (
-      (dispatch) => {
-         dispatch(actionsUsers.setIsFetching(true))
-         dispatch(actionsUsers.setFilter(term, friend))
-         getUsers(currentPage, pageSize, term, friend).then(data => {
-            dispatch(actionsUsers.setUsers(data.items))
-            dispatch(actionsUsers.setAllUsers(data.totalCount))
-            dispatch(actionsUsers.setIsFetching(false))
-         })
-      }
-   )
-}
+// export const getUsersTC = (currentPage: number, pageSize: number, term: string, friend: boolean | null): ThunkAction<void, AppStateType, unknown, ActionsType> => {
+//    return (
+//       (dispatch) => {
+//          dispatch(actionsUsers.setIsFetching(true))
+//          dispatch(actionsUsers.setFilter(term, friend))
+//          getUsers(currentPage, pageSize, term, friend).then(data => {
+//             dispatch(actionsUsers.setUsers(data.items))
+//             dispatch(actionsUsers.setAllUsers(data.totalCount))
+//             dispatch(actionsUsers.setIsFetching(false))
+//          })
+//       }
+//    )
+// }
+
+
+// ...
+
+export const getUsersTC = (currentPage: number, pageSize: number, term: string, friend: boolean | null): ThunkUsersType => async (dispatch) => {
+   try {
+      dispatch(actionsUsers.setIsFetching(true));
+      dispatch(actionsUsers.setFilter(term, friend));
+
+      const data = await getUsers(currentPage, pageSize, term, friend);
+      dispatch(actionsUsers.setUsers(data.items));
+      dispatch(actionsUsers.setAllUsers(data.totalCount));
+      dispatch(actionsUsers.setIsFetching(false));
+
+   } catch (error) {
+      dispatch(actionsErrors.setErrorAC('An error occurred. Please try again.'));
+   }
+};
+
 
 export const followUnfollowUserTC = (userID: number, follow: boolean): ThunkUsersType => async (dispatch) => {
    dispatch(actionsUsers.toggleFollowingProgress(true, userID))

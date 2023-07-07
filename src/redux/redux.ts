@@ -5,13 +5,15 @@ import profileReducer from "./profileReducer";
 import appReducer from "./appReducer";
 import usersReducer from "./usersReducer";
 import { compose } from "redux";
+import errorsReducer from "./errorsReducer";
 
 
 let reducers = combineReducers({
    auth: authReducer,
    profile: profileReducer,
    app: appReducer,
-   users: usersReducer
+   users: usersReducer,
+   errors: errorsReducer
 })
 
 type ReducersType = typeof reducers

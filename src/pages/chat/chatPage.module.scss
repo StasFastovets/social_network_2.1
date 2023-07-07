@@ -7,8 +7,15 @@
 
 .message{
    margin: 0px 30px 15px 0px;
+   padding: 0px 0px 10px 0px;
+   border-bottom: 1px solid #7e7777;
    img {
+      width: 50px;
       margin: 0px 10px 5px 0px;
+   }
+   &__text {
+      font-size: 18px;
+      font-weight: 500;
    }
 }
 

@@ -17,8 +17,10 @@ import { initializedApp } from './redux/appSelectors';
 import { AnyAction } from 'redux';
 import Header from './components/header/Header';
 import Profile from './components/profile/Profile';
+import { getError } from './redux/errorsSelectors';
+import ErrorsAPI from './components/other/errorsAPI/errorsAPI';
 
- 
+
 
 const DialogsContainer = React.lazy(() => import('./components/dialogs/DialogsContainer'));
 const Users = React.lazy(() => import('./components/users/Users'));
@@ -30,6 +32,7 @@ const ChatPage = React.lazy(() => import('./pages/chat/ChatPage'));
 const App: React.FC = (props) => {
 
   const initialized = useSelector(initializedApp)
+  const error = useSelector(getError)
 
   const dispatch = useDispatch()
 
@@ -37,6 +40,12 @@ const App: React.FC = (props) => {
     const action = InitializedAppTC()
     dispatch(action as ThunkAppType & AnyAction);
   }, [])
+
+  useEffect(() => {
+    if (error) {
+
+    }
+  }, [error]);
 
   if (!initialized) {
     return <Preloader />
@@ -53,30 +62,34 @@ const App: React.FC = (props) => {
             <Navigation />
           </div>
           <div className={style.content}>
-            <Suspense fallback={<Preloader />}>
-              <ErrorBoundary FallbackComponent={ErrorFallback}>
-                <Routes>
-                  <Route path='/' element={<HomePage />} />
-                  <Route path='/profile/:userID' element={<Profile />} />
-                  <Route path='/profile/' element={<Profile />} />
-                  <Route path='/dialogs/*' element={<DialogsContainer />} />
-                  <Route path='/users/' element={<Users />} />
-                  <Route path='/login/' element={<LoginInfo />} />
-                  <Route path='/news/' element={<NewsContainer />} />
-                  <Route path='/music/' element={<MusicContainer />} />
-                  <Route path='/settings/' element={<SettingsContainer />} />
-                  <Route path='/chat/' element={<ChatPage />} />
-                  <Route path='*' element={<NotFoundPage />} />
-                </Routes>
-              </ErrorBoundary>
-            </Suspense>
+            {error ? (
+              <ErrorsAPI error={error} />
+            ) : (
+              <Suspense fallback={<Preloader />}>
+                <ErrorBoundary FallbackComponent={ErrorFallback}>
+                  <Routes>
+                    <Route path='/' element={<HomePage />} />
+                    <Route path='/profile/:userID' element={<Profile />} />
+                    <Route path='/profile/' element={<Profile />} />
+                    <Route path='/dialogs/' element={<DialogsContainer />} />
+                    <Route path='/users/' element={<Users />} />
+                    <Route path='/login/' element={<LoginInfo />} />
+                    <Route path='/news/' element={<NewsContainer />} />
+                    <Route path='/music/' element={<MusicContainer />} />
+                    <Route path='/settings/' element={<SettingsContainer />} />
+                    <Route path='/chat/' element={<ChatPage />} />
+                    <Route path='' element={<NotFoundPage />} />
+                  </Routes>
+                </ErrorBoundary>
+              </Suspense>
+            )}
           </div>
           <div className={style.footer}>
             <Footer />
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
 

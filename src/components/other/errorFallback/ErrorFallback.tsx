@@ -2,7 +2,7 @@ import { useErrorBoundary } from "react-error-boundary";
 import s from './errorFallback.module.scss'
 
 
-type ErrorFallbackType = {
+export type ErrorFallbackType = {
    error: Error
 }
 

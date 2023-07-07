@@ -11,7 +11,7 @@ type StateType = typeof initialState
 
 
 export const actionsApp = {
-   initializedSuccess: () => ({ type: 'app/INITIALIZED_SUCCESS' })
+   initializedSuccess: () => ({ type: 'app/INITIALIZED_SUCCESS' } as const)
 }
 
 type ActionsType = ReturnType<PropertiesTypes<typeof actionsApp>>

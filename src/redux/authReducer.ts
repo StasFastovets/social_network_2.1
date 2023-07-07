@@ -5,6 +5,7 @@ import { logIn, getUser, savePhoto } from '../API/api';
 import { actionsProfile } from './profileReducer';
 import { AppStateType, BaseThunkType, PropertiesTypes } from './redux';
 import Nullable from './nullable'
+import { actionsErrors } from './errorsReducer';
 
 
 
@@ -112,15 +113,19 @@ const authReducer = (state: StateType = initialState, action: ActionsType): Stat
 
 
 // type ThunkType = ThunkAction<Promise<void>, AppStateType, unknown, ActionsType>
-export type ThunkAuthType = BaseThunkType<ActionsType | ReturnType<typeof actionsProfile.setProfilePhotosAC>>
+export type ThunkAuthType = BaseThunkType<ActionsType | ReturnType<typeof actionsProfile.setProfilePhotosAC> | ReturnType<typeof actionsErrors.setErrorAC>>
 
 export const authTC = (): ThunkAuthType => async (dispatch) => {
-   const response = await getAuth()
-   if (response.resultCode === ResultCode.Success) {
-      const { email, id, login } = response.data
-      dispatch(actions.setUserDataAC(id, email, login, true))
-      const userData = await getUser(id)
-      dispatch(actions.setUserAC(userData))
+   try {
+      const response = await getAuth()
+      if (response.resultCode === ResultCode.Success) {
+         const { email, id, login } = response.data
+         dispatch(actions.setUserDataAC(id, email, login, true))
+         const userData = await getUser(id)
+         dispatch(actions.setUserAC(userData))
+      }
+   } catch (error) {
+      dispatch(actionsErrors.setErrorAC('An error occured. Please try again.'))
    }
 }
 
