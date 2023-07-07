@@ -24,17 +24,6 @@ const Chat: React.FC = () => {
 
    const [wsChannel, setWsChannel] = useState<WebSocket | null>(null)
 
-   // useEffect(() => {
-   //    function createChannel() {
-   //       let ws = new WebSocket('wss://social-network.samuraijs.com/handlers/ChatHandler.ashx')
-   //       wsChannel?.addEventListener('close', () => {
-   //          setTimeout(createChannel, 3000)
-   //       })
-   //       setWsChannel(ws)
-   //    }
-   //    createChannel()
-   // }, [])
-
    useEffect(() => {
       createChannel();
 
@@ -71,7 +60,7 @@ const Messages: React.FC<{ wsChannel: WebSocket | null }> = ({ wsChannel }) => {
 
    useEffect(() => {
       const handleMessage = (e: MessageEvent) => {
-         const newMessages = JSON.parse(e.data);
+         const newMessages: ChatMessageType[] = JSON.parse(e.data);
          setMessages((prevMessages) => [...prevMessages, ...newMessages]);
       };
 
@@ -106,29 +95,23 @@ const Message: React.FC<{ message: ChatMessageType }> = ({ message }) => {
 }
 
 const AddMessageForm: React.FC<{ wsChannel: WebSocket | null }> = ({ wsChannel }) => {
-   const [message, sentMessage] = useState('')
-   const [readyStatus, setReadyStatus] = useState<'pending' | 'open'>('pending')
-
-
-   useEffect(() => {
-      wsChannel?.addEventListener('open', () => setReadyStatus('open'))
-   }, [wsChannel])
+   const [message, setMessage] = useState("");
 
    const sendMessage = () => {
-      if (!message) {
-         return
+      if (!message || !wsChannel) {
+         return;
       }
-      wsChannel?.send(message)
-      sentMessage('')
-   }
+      wsChannel.send(message);
+      setMessage("");
+   };
 
    return (
       <div className={s.messageForm}>
-         <textarea name='message' onChange={(e) => sentMessage(e.currentTarget.value)} value={message}></textarea>
-         <button disabled={wsChannel == null || readyStatus !== 'open'} onClick={sendMessage}>Send</button>
+         <textarea name="message" onChange={(e) => setMessage(e.currentTarget.value)} value={message}></textarea>
+         <button disabled={!wsChannel} onClick={sendMessage}>Send</button>
       </div>
-   )
-}
+   );
+};
 
 /* кнопка скрыта пока соединение по каналу не установлено */
 
