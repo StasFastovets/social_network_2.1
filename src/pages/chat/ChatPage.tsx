@@ -1,14 +1,12 @@
-import React, { CSSProperties, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import s from './chatPage.module.scss'
+import { useDispatch, useSelector } from 'react-redux';
+import { ActionsChatType, sendMessageTC, startMessagesListiningTC, stopMessagesListiningTC } from "../../redux/chatReducer";
+import { getMessages, getStatus } from "../../redux/chatSelector";
+import { ThunkDispatch } from 'redux-thunk';
+import { AppStateType } from "../../redux/redux";
+import { ChatMessageType } from "../../API/chat-api";
 
-
-export type ChatMessageType = {
-   message: string,
-   photo: string,
-   userId: number,
-   userName: string
-
-}
 
 const ChatPage: React.FC = () => {
 
@@ -22,54 +20,34 @@ const ChatPage: React.FC = () => {
 
 const Chat: React.FC = () => {
 
-   const [wsChannel, setWsChannel] = useState<WebSocket | null>(null)
+   const dispatch: ThunkDispatch<AppStateType, undefined, ActionsChatType> = useDispatch();
 
    useEffect(() => {
-      createChannel();
+      dispatch(startMessagesListiningTC());
 
       return () => {
-         if (wsChannel) {
-            wsChannel.close();
-         }
+         dispatch(stopMessagesListiningTC());
       };
    }, []);
 
-   const createChannel = () => {
-      const ws = new WebSocket("wss://social-network.samuraijs.com/handlers/ChatHandler.ashx");
-      ws.addEventListener("close", () => {
-         setTimeout(createChannel, 3000);
-      });
-      setWsChannel(ws);
-   };
+
 
    return (
       <div className={s.chat}>
          <div className={s.chat__messages}>
-            <Messages wsChannel={wsChannel} />
+            <Messages />
          </div>
          <div className={s.chat__messageForm}>
-            <AddMessageForm wsChannel={wsChannel} />
+            <AddMessageForm />
          </div>
       </div>
    )
 }
 
 
-const Messages: React.FC<{ wsChannel: WebSocket | null }> = ({ wsChannel }) => {
-   const [messages, setMessages] = useState<ChatMessageType[]>([]);
+const Messages: React.FC = () => {
 
-   useEffect(() => {
-      const handleMessage = (e: MessageEvent) => {
-         const newMessages: ChatMessageType[] = JSON.parse(e.data);
-         setMessages((prevMessages) => [...prevMessages, ...newMessages]);
-      };
-
-      wsChannel?.addEventListener('message', handleMessage);
-
-      return () => {
-         wsChannel?.removeEventListener('message', handleMessage);
-      };
-   }, [wsChannel]);
+   const messages = useSelector(getMessages)
 
    return (
       <div className={s.messages}>
@@ -94,24 +72,38 @@ const Message: React.FC<{ message: ChatMessageType }> = ({ message }) => {
    )
 }
 
-const AddMessageForm: React.FC<{ wsChannel: WebSocket | null }> = ({ wsChannel }) => {
-   const [message, setMessage] = useState("");
-
-   const sendMessage = () => {
-      if (!message || !wsChannel) {
-         return;
-      }
-      wsChannel.send(message);
-      setMessage("");
+const useSendMessageHandler = (): ((message: string) => void) => {
+   const dispatch: ThunkDispatch<AppStateType, undefined, ActionsChatType> = useDispatch();
+ 
+   const sendMessageHandler = (message: string) => {
+     if (!message) {
+       return;
+     }
+     dispatch(sendMessageTC(message));
    };
+ 
+   return sendMessageHandler;
+ };
+ 
+ const AddMessageForm: React.FC = () => {
+   const [message, setMessage] = useState('');
 
+   const status = useSelector(getStatus)
+      
+   const sendMessageHandler = useSendMessageHandler();
+ 
+   const handleClick = () => {
+     sendMessageHandler(message);
+     setMessage('');
+   };
+ 
    return (
-      <div className={s.messageForm}>
-         <textarea name="message" onChange={(e) => setMessage(e.currentTarget.value)} value={message}></textarea>
-         <button disabled={!wsChannel} onClick={sendMessage}>Send</button>
-      </div>
+     <div className={s.messageForm}>
+       <textarea name="message" onChange={(e) => setMessage(e.currentTarget.value)} value={message}></textarea>
+       <button disabled={message.length === 0} onClick={handleClick}>Send</button>
+     </div>
    );
-};
+ };
 
 /* кнопка скрыта пока соединение по каналу не установлено */
 

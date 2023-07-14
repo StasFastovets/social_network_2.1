@@ -6,6 +6,7 @@ import appReducer from "./appReducer";
 import usersReducer from "./usersReducer";
 import { compose } from "redux";
 import errorsReducer from "./errorsReducer";
+import chatReducer from "./chatReducer";
 
 
 let reducers = combineReducers({
@@ -13,7 +14,8 @@ let reducers = combineReducers({
    profile: profileReducer,
    app: appReducer,
    users: usersReducer,
-   errors: errorsReducer
+   errors: errorsReducer,
+   chat: chatReducer
 })
 
 type ReducersType = typeof reducers
