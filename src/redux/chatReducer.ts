@@ -1,8 +1,11 @@
-import { BaseThunkType, PropertiesTypes } from './redux';
+import { AppStateType, BaseThunkType, PropertiesTypes } from './redux';
 import { chatAPI, ChatMessageType } from '../API/chat-api';
+import { ThunkDispatch } from 'redux-thunk';
+import { CombinedState } from 'redux';
+import uuid from 'react-uuid';
 
 
-type StatusType = 'pending' | 'ready'
+export type StatusType = 'pending' | 'ready' | 'error'
 
 let initialState = {
    messages: [] as ChatMessageType[],
@@ -23,7 +26,7 @@ const chatReducer = (state: StateType = initialState, action: ActionsChatType): 
       case 'chat/MESEGESS_RECEIVED':
          return {
             ...state,
-            messages: [...state.messages, ...action.payload.messages]
+            messages: [...state.messages, ...action.payload.messages.map(m => ({ ...m, id: uuid() }))].filter((messages, index, array) => index >= array.length - 100)
          }
       case 'chat/STATUS_CHANGED':
          return {
@@ -42,11 +45,13 @@ export type ThunkChatType = BaseThunkType<ActionsChatType>
 
 export const startMessagesListiningTC = (): ThunkChatType => async (dispatch) => {
    chatAPI.start()
-   chatAPI.subscribe((messages) => dispatch(actions.messagesReceivedAC(messages)))
+   chatAPI.subscribeMessage((messages: ChatMessageType[]) => dispatch(actions.messagesReceivedAC(messages)))
+   chatAPI.subscribeStatus(statusChangedHendlerCreator(dispatch))
 }
 
 export const stopMessagesListiningTC = (): ThunkChatType => async (dispatch) => {
-   chatAPI.unsubscribe((messages) => dispatch(actions.messagesReceivedAC(messages)))
+   chatAPI.unsubscribeMessage((messages: ChatMessageType[]) => dispatch(actions.messagesReceivedAC(messages)))
+   chatAPI.unsubscribeStatus(statusChangedHendlerCreator(dispatch))
    chatAPI.stop()
 }
 
@@ -54,5 +59,13 @@ export const sendMessageTC = (message: string): ThunkChatType => async (dispatch
    chatAPI.sendMessage(message)
 }
 
+let _statusChangedHendler: ((status: StatusType) => void) | null = null
+
+const statusChangedHendlerCreator = (dispatch: ThunkDispatch<CombinedState<AppStateType>, any, ActionsChatType>) => {
+   if (_statusChangedHendler === null) {
+      _statusChangedHendler = (status) => dispatch(actions.statusChangedAC(status));
+   }
+   return _statusChangedHendler;
+};
 
 export default chatReducer

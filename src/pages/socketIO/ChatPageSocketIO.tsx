@@ -1,15 +1,14 @@
-import React, { useEffect, useRef, useState } from "react"
-import s from './chatPage.module.scss'
+import React, { useEffect, useRef, useState } from "react";
+import s from './chatPage.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { ActionsChatType, sendMessageTC, startMessagesListiningTC, stopMessagesListiningTC } from "../../redux/chatReducer";
 import { getMessages, getStatus } from "../../redux/chatSelector";
-import { ThunkDispatch } from 'redux-thunk';
-import { AppStateType } from "../../redux/redux";
 import { ChatMessageType } from "../../API/chat-api";
+import { io, Socket } from "socket.io-client";
+import { AppStateType } from "../../redux/redux";
+import { ThunkDispatch } from "redux-thunk";
 
-
-const ChatPage: React.FC = () => {
-
+const ChatPageSocketIO: React.FC = () => {
    return (
       <div className={s.wrapper}>
          <Chat />
@@ -17,21 +16,30 @@ const ChatPage: React.FC = () => {
    )
 }
 
-
 const Chat: React.FC = () => {
-
    const dispatch: ThunkDispatch<AppStateType, undefined, ActionsChatType> = useDispatch();
    const status = useSelector(getStatus)
+   const socketRef = useRef<Socket | null>(null);
 
    useEffect(() => {
-      dispatch(startMessagesListiningTC());
+      socketRef.current = io("wss://social-network.samuraijs.com", {
+         transports: ["websocket"],
+      });
+
+      socketRef.current.on("connect", () => {
+         dispatch(startMessagesListiningTC());
+      });
+
+      socketRef.current.on("disconnect", () => {
+         dispatch(stopMessagesListiningTC());
+      });
 
       return () => {
-         dispatch(stopMessagesListiningTC());
+         if (socketRef.current) {
+            socketRef.current.close();
+         }
       };
    }, []);
-
-
 
    return (
       <div className={s.chat}>
@@ -42,10 +50,10 @@ const Chat: React.FC = () => {
                :
                <>
                   <div className={s.chat__messages}>
-                     <Messages />
+                     <Messages socket={socketRef.current} />
                   </div>
                   <div className={s.chat__messageForm}>
-                     <AddMessageForm />
+                     <AddMessageForm socket={socketRef.current} />
                   </div>
                </>
          }
@@ -53,26 +61,23 @@ const Chat: React.FC = () => {
    )
 }
 
-
-const Messages: React.FC = () => {
-
-   const messages = useSelector(getMessages)
-   const messagesRef = useRef<HTMLDivElement>(null)
-   const [isAutoScroll, setIsAutoScroll] = useState(true)
+const Messages: React.FC<{ socket: Socket | null }> = ({ socket }) => {
+   const messages = useSelector(getMessages);
+   const messagesRef = useRef<HTMLDivElement>(null);
+   const [isAutoScroll, setIsAutoScroll] = useState(true);
 
    const scrollHandler = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-      const element = e.currentTarget
+      const element = e.currentTarget;
       if (Math.abs(element.scrollHeight - element.scrollTop - element.clientHeight) < 300) {
          !isAutoScroll && setIsAutoScroll(true);
       } else {
          isAutoScroll && setIsAutoScroll(false);
       }
-
    }
 
    useEffect(() => {
       if (isAutoScroll) {
-         messagesRef.current?.scrollIntoView()
+         messagesRef.current?.scrollIntoView();
       }
    }, [messages]);
 
@@ -86,7 +91,6 @@ const Messages: React.FC = () => {
    );
 };
 
-
 const Message: React.FC<{ message: ChatMessageType }> = React.memo(({ message }) => {
    return (
       <div className={s.message}>
@@ -97,27 +101,22 @@ const Message: React.FC<{ message: ChatMessageType }> = React.memo(({ message })
          </div>
       </div>
    )
-})
+});
 
-const useSendMessageHandler = (): ((message: string) => void) => {
-   const dispatch: ThunkDispatch<AppStateType, undefined, ActionsChatType> = useDispatch();
-
+const useSendMessageHandler = (socket: Socket | null): ((message: string) => void) => {
    const sendMessageHandler = (message: string) => {
-      if (!message) {
-         return;
+      if (socket && message) {
+         socket.emit("sendMessage", message);
       }
-      dispatch(sendMessageTC(message));
    };
 
    return sendMessageHandler;
 };
 
-const AddMessageForm: React.FC = () => {
+const AddMessageForm: React.FC<{ socket: Socket | null }> = ({ socket }) => {
    const [message, setMessage] = useState('');
-
-   const status = useSelector(getStatus)
-
-   const sendMessageHandler = useSendMessageHandler();
+   const status = useSelector(getStatus);
+   const sendMessageHandler = useSendMessageHandler(socket);
 
    const handleClick = () => {
       sendMessageHandler(message);
@@ -134,5 +133,5 @@ const AddMessageForm: React.FC = () => {
 
 /* кнопка скрыта пока соединение по каналу не установлено */
 
-export default ChatPage
+export default ChatPageSocketIO;
 

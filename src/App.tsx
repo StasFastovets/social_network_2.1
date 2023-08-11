@@ -19,6 +19,7 @@ import Header from './components/header/Header';
 import Profile from './components/profile/Profile';
 import { getError } from './redux/errorsSelectors';
 import ErrorsAPI from './components/other/errorsAPI/errorsAPI';
+import ChatPageSocketIO from './pages/socketIO/ChatPageSocketIO';
 
 
 
@@ -78,6 +79,7 @@ const App: React.FC = (props) => {
                     <Route path='/music/' element={<MusicContainer />} />
                     <Route path='/settings/' element={<SettingsContainer />} />
                     <Route path='/chat/' element={<ChatPage />} />
+                    {/* <Route path='/chat/' element={<ChatPageSocketIO />} /> */}
                     <Route path='' element={<NotFoundPage />} />
                   </Routes>
                 </ErrorBoundary>
